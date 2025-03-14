@@ -3,5 +3,5 @@
 自動的にページが開きます。
 
 自動で開かない場合は、URLに
-”http://localhost:5500/similarian/”
+http://localhost:5500/similarian/
 と入力しましょう
