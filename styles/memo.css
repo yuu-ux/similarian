@@ -96,6 +96,7 @@
     overflow: hidden;
     border-radius: 15px;
     margin: 10px;
+    overflow-y: auto;
 }
 
 .side-memos {
