@@ -4,7 +4,10 @@ function loadComponent(id, file, callback) {
     .then(response => response.text())
     .then(data => {
       document.getElementById(id).innerHTML = data;
-      if (callback) callback(); // コンテンツ読み込み後にコールバック実行
+      if (callback) {
+        // DOMの更新を待ってからコールバックを実行
+        setTimeout(callback, 0);
+      }
     })
     .catch(error => console.error(`Error loading ${file}:`, error));
 }

@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 30px;
+    margin-left: -20px;
 
 }
 
@@ -13,11 +14,12 @@
 }
 
 .logo-text {
-    position: fixed;
+    /* position: fixed;
     top: 12%;
-    left: 5%;
+    left: 5%; */
     font-family: "Dancing Script", cursive; /* 筆記体フォント */
     font-size: 24px; /* 文字サイズ */
     color: #333; /* 文字色 */
-    margin-top: 8px; /* ロゴとの間隔 */
+    margin-top: -30px; /* ロゴとの間隔 */
+    margin-left: 10px;
 }

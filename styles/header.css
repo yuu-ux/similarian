@@ -10,7 +10,7 @@
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem; /* ボタン間の間隔 */
   background-color: #ddd;
 
   border-bottom: 1.5px solid #89a0ab;
@@ -23,8 +23,6 @@
 
 /* 新しいメモボタン */
 #newMemoBtn {
-  /* margin-left: 200px; */
-
   background-color: #848984;
   color: white;
   border: none;
@@ -46,6 +44,7 @@
   border: 1px solid #aaa;
   border-radius: 4px;
   padding: 0.5rem;
+  margin-left: auto; /* 右寄せ */
 }
 
 .search-box input {
@@ -63,6 +62,11 @@
   font-size: 16px;
   cursor: pointer;
   transition: opacity 0.3s ease;
+  border-radius: 4px;
+}
+
+.toggle-button-header:hover {
+  background-color: #555;
 }
 
 /* 初期状態では非表示 */
