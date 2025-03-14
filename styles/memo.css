@@ -1,0 +1,60 @@
+/* メモエリア */
+.memo-area {
+    flex-grow: 1;
+    padding: 1rem;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+  }
+
+/* .memo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1rem;
+}
+
+.memo-item {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.memo-item:hover {
+  background-color: #e0e0e0;
+} */
+
+.memo-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 横方向に3列 */
+    grid-template-rows: repeat(2, 1fr);    /* 縦方向に2行に変更 */
+    gap: 20px;
+    padding: 20px;
+    height: 100vh; /* 必要に応じて高さを調整 (例: 画面全体に広げる場合) */
+}
+
+.memo-item {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.memo-item:hover {
+    background-color: #e0e0e0;
+}
+
+@media (max-width: 1200px) {
+    .memo-list { /* セレクタを .memo-list に修正 */
+        grid-template-columns: repeat(3, 1fr); /* 横3列は維持 */
+    }
+}
+
+@media (max-width: 768px) {
+    .memo-list { /* セレクタを .memo-list に修正 */
+        grid-template-columns: 1fr; /* 1列に変更 */
+        grid-template-rows: repeat(6, 1fr); /* 縦方向に6行 (1列表示なので縦長に並べる) */
+    }
+}

@@ -1,0 +1,53 @@
+/* サイドバー */
+.sidebar {
+    position: fixed;
+    top: 0px;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+
+    padding: 1rem;
+    box-sizing: border-box;
+    background-color: #cfcaca;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .toggle-button {
+  display: none;
+}
+
+/* 「カテゴリーの文字」 */
+.sidebar h2 {
+  margin-top: 0px;
+  font-size: 20px;
+}
+
+
+
+/* グループ一覧 */
+.group-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+/* 各グループ名 */
+.group-list li {
+  margin: 1rem 0;
+  cursor: pointer;
+}
+
+.group-list li:hover {
+  text-decoration: underline;
+}
+
+/* 設定・アカウント */
+.settings {
+  margin-top: auto;
+  cursor: pointer;
+}
+  
