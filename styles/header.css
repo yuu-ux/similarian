@@ -55,7 +55,7 @@
 
 /* ヘッダー内の開閉ボタン（サイドバーが閉じたとき用） */
 .toggle-button-header {
-  background-color: #444;
+  background-color: #aaa;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -66,7 +66,7 @@
 }
 
 .toggle-button-header:hover {
-  background-color: #555;
+  background-color: #aaa;
 }
 
 /* 初期状態では非表示 */
