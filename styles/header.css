@@ -14,6 +14,7 @@
   background-color: #ddd;
 
   border-bottom: 1.5px solid #89a0ab;
+  transition: all 0.3s ease;
 }
 
 .header.expanded {
@@ -55,14 +56,16 @@
 
 /* ヘッダー内の開閉ボタン（サイドバーが閉じたとき用） */
 .toggle-button-header {
-  background-color: #aaa;
+  background-color: #ddd;
   color: white;
   border: none;
   padding: 10px 15px;
-  font-size: 16px;
+  font-size: 30px;
   cursor: pointer;
-  transition: opacity 0.3s ease;
   border-radius: 4px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .toggle-button-header:hover {
@@ -71,5 +74,7 @@
 
 /* 初期状態では非表示 */
 .hidden {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }

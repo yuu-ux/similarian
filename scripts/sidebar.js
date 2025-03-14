@@ -42,17 +42,20 @@ window.setupSidebar = function() {
 
     const mainContent = document.querySelector('.main-content');
 
-    if (isCollapsed) {
-      sidebar.classList.add("collapsed");   // サイドバーを閉じる
-      header.classList.add("expanded");     // ヘッダーを広げる
-      if (mainContent) mainContent.classList.add("expanded"); // メインコンテンツを広げる
-      if (toggleButtonHeader) toggleButtonHeader.classList.remove("hidden"); // ヘッダー内のボタンを表示
-    } else {
-      sidebar.classList.remove("collapsed"); // サイドバーを開く
-      header.classList.remove("expanded");   // ヘッダーを元のサイズに
-      if (mainContent) mainContent.classList.remove("expanded"); // メインコンテンツを元に戻す
-      if (toggleButtonHeader) toggleButtonHeader.classList.add("hidden"); // ヘッダー内のボタンを非表示
-    }
+    // すべての状態変更を同時に行う
+    requestAnimationFrame(() => {
+      if (isCollapsed) {
+        sidebar.classList.add("collapsed");   // サイドバーを閉じる
+        header.classList.add("expanded");     // ヘッダーを広げる
+        if (mainContent) mainContent.classList.add("expanded"); // メインコンテンツを広げる
+        if (toggleButtonHeader) toggleButtonHeader.classList.remove("hidden"); // ヘッダー内のボタンを表示
+      } else {
+        sidebar.classList.remove("collapsed"); // サイドバーを開く
+        header.classList.remove("expanded");   // ヘッダーを元のサイズに
+        if (mainContent) mainContent.classList.remove("expanded"); // メインコンテンツを元に戻す
+        if (toggleButtonHeader) toggleButtonHeader.classList.add("hidden"); // ヘッダー内のボタンを非表示
+      }
+    });
   }
 
   // ボタンにクリックイベントを設定
