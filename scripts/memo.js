@@ -172,6 +172,17 @@ function openMemo(id) {
     const memoDetailDateText = document.querySelector('.memo-detail-date-text');
     const sideMemos = document.querySelector('.side-memos');
 
+    // 選択状態をリセット
+    document.querySelectorAll('.memo-item.selected, .side-memo-item.selected').forEach(item => {
+        item.classList.remove('selected');
+    });
+
+    // メインリストの選択状態を更新
+    const selectedMemoItem = document.querySelector(`.memo-item[data-id="${id}"]`);
+    if (selectedMemoItem) {
+        selectedMemoItem.classList.add('selected');
+    }
+
     // id に対応するメモデータを取得
     const memo = memoData.find(memo => memo.id === id);
     if (!memo) return;
@@ -184,18 +195,28 @@ function openMemo(id) {
     // サイドメモに他のメモを並べる
     sideMemos.innerHTML = '';
     memoData.forEach(m => {
-        let sideItem = document.createElement('div');
-        sideItem.className = 'side-memo-item';
-        sideItem.innerHTML = marked.parse(m.text);
-        sideItem.onclick = () => openMemo(m.id);
-        sideMemos.appendChild(sideItem);
+        if (m.id !== id) {
+            let sideItem = document.createElement('div');
+            sideItem.className = 'side-memo-item';
+            sideItem.setAttribute('data-id', m.id);
+            sideItem.innerHTML = marked.parse(m.text);
+            sideItem.onclick = () => openMemo(m.id);
+            sideMemos.appendChild(sideItem);
+        } else {
+            // 選択されているメモをサイドメモにも表示し、選択状態にする
+            let sideItem = document.createElement('div');
+            sideItem.className = 'side-memo-item selected';
+            sideItem.setAttribute('data-id', m.id);
+            sideItem.innerHTML = marked.parse(m.text);
+            sideItem.onclick = () => openMemo(m.id);
+            sideMemos.appendChild(sideItem);
+        }
     });
 
-    // **表示切り替え**
-    console.log("openMemo: memo-list を非表示にし、memo-emb を表示");
+    // 表示切り替え
     memoList.classList.add('hidden');
     memoEmb.classList.remove('hidden');
-}
+} 
 
 function closeMemo() {
     const memoList = document.querySelector('.memo-list');
