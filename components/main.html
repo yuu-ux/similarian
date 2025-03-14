@@ -1,5 +1,20 @@
 <main>
     <div class="memo-list">
-        <!-- JavaScriptでメモを動的に追加 -->
+        <!-- メモアイテムはJavaScriptで動的に生成 -->
+    </div>
+    <!-- ここから詳細画面 -->
+    <div class="memo-emb hidden">
+        <div class="memo-detail">
+            <button onclick="closeMemo()" class="memo-detail-back-button">戻る</button>
+            <div class="memo-detail-group">
+                <div class="memo-detail-group-text"></div>
+            </div>
+            <div class="memo-detail-date">
+                <div class="memo-detail-date-text"></div>
+            </div>
+            <hr noshade>
+            <div class="memo-content"></div>
+        </div>
+        <div class="side-memos"></div>
     </div>
 </main>

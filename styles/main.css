@@ -24,6 +24,7 @@
   /* background-color: #ddd; */
   background-color: #e5ecef;
   transition: transform 0.3s ease, width 0.3s ease;
+  overflow-y: auto;
 }
 
 .main-content.expanded {
