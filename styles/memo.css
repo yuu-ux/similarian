@@ -1,60 +1,294 @@
-/* メモエリア */
-.memo-area {
-    flex-grow: 1;
-    padding: 1rem;
-    background-color: #fff;
-    border-left: 1px solid #ddd;
-  }
+@import url('https://unpkg.com/ress/dist/ress.min.css');
 
-/* .memo-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 1rem;
+.hidden {
+    display: none !important;
 }
-
-.memo-item {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-}
-
-.memo-item:hover {
-  background-color: #e0e0e0;
-} */
 
 .memo-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 横方向に3列 */
-    grid-template-rows: repeat(2, 1fr);    /* 縦方向に2行に変更 */
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: calc((100vh - 40px) / 2);
     gap: 20px;
     padding: 20px;
-    height: 100vh; /* 必要に応じて高さを調整 (例: 画面全体に広げる場合) */
+    height: 100vh;
 }
 
 .memo-item {
-    background-color: #f0f0f0;
+    background-color: #ffffff;
     padding: 15px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.10); 
+    border: 1px solid #ddd;
+    height: 100%;
+    overflow: hidden;
+    gap: 10px;
+}
+
+.memo-item-textdata {
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    line-clamp: 10;
+    -webkit-box-orient: vertical;
+    line-height: 1.8;
+    max-height: calc(1.5em * 10); /* 3行分の高さを指定 */
+    font-size: 16px; /* テキストサイズを調整 */
+}
+
+.memo-item-group,
+.memo-detail-group-text {
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px; /* グループ名のサイズを調整 */
+    color: #4f83d1; /* グループ名の色を変更 */
+}
+
+.memo-item-group-button {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.memo-item-button {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px;
+}
+
+.memo-item-button-edit,
+.memo-item-button-delete {
+    background-color: #4f83d1;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
 .memo-item:hover {
     background-color: #e0e0e0;
 }
 
+.memo-emb {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.memo-detail {
+    flex: 3;
+    background-color: #ffffff;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 15px;
+    margin: 10px;
+}
+
+.side-memos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+}
+
+.side-memo-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    height: calc((100vh - 100px) / 5);
+    min-height: calc((100vh - 100px) / 5);
+    overflow: hidden;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.side-memo-item-textdata {
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    line-clamp: 10;
+    -webkit-box-orient: vertical;
+    line-height: 1.5;
+    max-height: calc(1.5em * 10);
+    font-size: 8px;
+    white-space: pre-line;
+}
+
+.side-memo-item ul,
+.side-memo-item ol,
+.side-memo-item li,
+.side-memo-item p {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline;
+}
+
+.side-memo-item h1 { font-size: 1rem; }
+.side-memo-item h2 { font-size: 0.8rem; }
+.side-memo-item h3 { font-size: 0.6rem; }
+.side-memo-item h4 { font-size: 0.4rem; }
+.side-memo-item h5 { font-size: 0.2rem; }
+.side-memo-item h6 { font-size: 0.1rem; }
+
+.side-memo-item-textdata h1,
+.side-memo-item-textdata h2,
+.side-memo-item-textdata h3,
+.side-memo-item-textdata h4,
+.side-memo-item-textdata h5,
+.side-memo-item-textdata h6 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: normal;
+    display: inline;
+}
+
+.side-memo-item-group {
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px;
+    color: #4f83d1;
+}
+
+.side-memo-item:hover {
+    background-color: #e0e0e0;
+}
+
+.memo-detail-date {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    gap: 10px;
+}
+
+.memo-detail-group {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    gap: 10px;
+}
+
+.memo-content {
+    padding: 10px;
+    line-height: 1.6;
+}
+
+/* Markdown スタイル */
+.memo-content h1,
+.memo-content h2,
+.memo-content h3,
+.memo-content h4,
+.memo-content h5,
+.memo-content h6 {
+    margin: 1em 0 0.5em;
+    font-weight: bold;
+}
+
+.side-memo-item-textdata h1 { font-size: 0.5em; }
+
+.memo-content h1 { font-size: 2em; }
+.memo-content h2 { font-size: 1.75em; }
+.memo-content h3 { font-size: 1.5em; }
+.memo-content h4 { font-size: 1.25em; }
+.memo-content h5 { font-size: 1.1em; }
+.memo-content h6 { font-size: 1em; }
+
+.memo-content p {
+    margin: 0.5em 0;
+}
+
+.memo-content ul,
+.memo-content ol {
+    margin: 0.5em 0;
+    padding-left: 2em;
+}
+
+.memo-content code {
+    background-color: #f3f3f3;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.memo-content pre {
+    background-color: #f3f3f3;
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+}
+
+.memo-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.memo-content blockquote {
+    border-left: 4px solid #ccc;
+    margin: 0.5em 0;
+    padding-left: 1em;
+    color: #666;
+}
+
+.memo-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.memo-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5em 0;
+}
+
+.memo-content th,
+.memo-content td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.memo-content th {
+    background-color: #f3f3f3;
+}
+
 @media (max-width: 1200px) {
-    .memo-list { /* セレクタを .memo-list に修正 */
-        grid-template-columns: repeat(3, 1fr); /* 横3列は維持 */
+    .memo-list {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: calc((100vh - 40px) / 2);
     }
 }
 
 @media (max-width: 768px) {
-    .memo-list { /* セレクタを .memo-list に修正 */
-        grid-template-columns: 1fr; /* 1列に変更 */
-        grid-template-rows: repeat(6, 1fr); /* 縦方向に6行 (1列表示なので縦長に並べる) */
+    .memo-list {
+        grid-template-columns: 1fr;
+        grid-auto-rows: calc((100vh - 40px) / 2);
     }
 }
