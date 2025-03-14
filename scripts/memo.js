@@ -184,13 +184,11 @@ function openMemo(id) {
     // サイドメモに他のメモを並べる
     sideMemos.innerHTML = '';
     memoData.forEach(m => {
-        if (m.id !== id) {
-            let sideItem = document.createElement('div');
-            sideItem.className = 'side-memo-item';
-            sideItem.innerHTML = marked.parse(m.text);
-            sideItem.onclick = () => openMemo(m.id);
-            sideMemos.appendChild(sideItem);
-        }
+        let sideItem = document.createElement('div');
+        sideItem.className = 'side-memo-item';
+        sideItem.innerHTML = marked.parse(m.text);
+        sideItem.onclick = () => openMemo(m.id);
+        sideMemos.appendChild(sideItem);
     });
 
     // **表示切り替え**
