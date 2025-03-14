@@ -279,6 +279,16 @@
     background-color: #f3f3f3;
 }
 
+.memo-detail-back-button {
+  margin: 0 0 0 auto;
+  background-color: #4f83d1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 @media (max-width: 1200px) {
     .memo-list {
         grid-template-columns: repeat(3, 1fr);
