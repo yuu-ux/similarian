@@ -6,7 +6,8 @@ services:
       - discovery.type=single-node
       - "OPENSEARCH_INITIAL_ADMIN_USER=${ADMIN_USER}"
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}"
-      - "DISABLE_SECURITY_PLUGIN=true"
+      #- "DISABLE_SECURITY_PLUGIN=true"
+      - "plugins.security.disabled=true"
     ports:
       - "9200:9200"
       - "9600:9600"
@@ -20,9 +21,10 @@ services:
       - "5601:5601"
     environment:
       - "OPENSEARCH_HOSTS=http://opensearch:9200"
-      - "DISABLE_SECURITY_PLUGIN=true"
-      - "OPENSEARCH_USERNAME=${ADMIN_USER}"
-      - "OPENSEARCH_PASSWORD=${ADMIN_PASSWORD}"
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "OPENSEARCH_DASHBOARDS_USERNAME=${ADMIN_USER}"
+      - "OPENSEARCH_DASHBOARDS_PASSWORD=${ADMIN_PASSWORD}"
     networks:
       - opensearch-net
     depends_on:
