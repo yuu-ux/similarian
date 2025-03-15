@@ -1,15 +1,33 @@
 services:
   opensearch:
     image: opensearchproject/opensearch:latest
+    container_name: opensearch
     environment:
       - discovery.type=single-node
-      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=admin"
+      - "OPENSEARCH_INITIAL_ADMIN_USER=${ADMIN_USER}"
+      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}"
+      - "DISABLE_SECURITY_PLUGIN=true"
     ports:
       - "9200:9200"
       - "9600:9600"
     networks:
       - opensearch-net
 
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - "OPENSEARCH_HOSTS=http://opensearch:9200"
+      - "DISABLE_SECURITY_PLUGIN=true"
+      - "OPENSEARCH_USERNAME=${ADMIN_USER}"
+      - "OPENSEARCH_PASSWORD=${ADMIN_PASSWORD}"
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch
+  
   app:
     build: .
     environment:
