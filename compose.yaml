@@ -3,10 +3,10 @@ services:
     image: opensearchproject/opensearch:latest
     environment:
       - discovery.type=single-node
-      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=admin"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
-      - "9200:9200"
-      - "9600:9600"
+      - 9200:9200
+      - 9600:9600
     networks:
       - opensearch-net
 
