@@ -5,14 +5,16 @@ import os
 app = Flask(__name__)
 
 # OpenSearch の接続設定
+admi_user = os.getenv('ADMIN_USER')
+admi_password = os.getenv('ADMIN_PASSWORD')
 OPENSEARCH_HOST = os.getenv("OPENSEARCH_HOST", "http://localhost:9200")
-client = OpenSearch(hosts=[OPENSEARCH_HOST], http_auth=("admin", "admin"))
+client = OpenSearch(hosts=[OPENSEARCH_HOST], http_auth=(admi_user, admi_password))
 
 INDEX_NAME = "notes"
 
 # データ追加（Create）
-@app.route("/notes", methods=["POST"])
-def create_note():
+@app.route("/create", methods=["POST"])
+def create():
     data = request.json
     response = client.index(index=INDEX_NAME, body=data)
     return jsonify({"message": "Note created", "id": response["_id"]})
