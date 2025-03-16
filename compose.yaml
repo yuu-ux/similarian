@@ -1,12 +1,11 @@
 services:
   opensearch:
     image: opensearchproject/opensearch:latest
-    container_name: opensearch
     environment:
       - discovery.type=single-node
-      - "OPENSEARCH_INITIAL_ADMIN_USER=${ADMIN_USER}"
-      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}"
-      - "plugins.security.disabled=true"
+      - OPENSEARCH_INITIAL_ADMIN_USER=${ADMIN_USER}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - plugins.security.disabled=true
     ports:
       - "9200:9200"
       - "9600:9600"
@@ -15,16 +14,15 @@ services:
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
-    container_name: opensearch-dashboards
     ports:
       - "5601:5601"
     env_file:
       - .env
     environment:
-      - "OPENSEARCH_HOSTS=http://opensearch:9200"
-      - "OPENSEARCH_DASHBOARDS_USERNAME=admin"
-      - "OPENSEARCH_DASHBOARDS_PASSWORD=admin"
-      # - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - OPENSEARCH_DASHBOARDS_USERNAME=admin
+      - OPENSEARCH_DASHBOARDS_PASSWORD=admin
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
     networks:
       - opensearch-net
     depends_on:
