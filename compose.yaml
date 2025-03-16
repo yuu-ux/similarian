@@ -3,12 +3,9 @@ services:
     image: opensearchproject/opensearch:latest
     environment:
       - discovery.type=single-node
-<<<<<<< HEAD
       - OPENSEARCH_INITIAL_ADMIN_USER=${ADMIN_USER}
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - plugins.security.disabled=true
-=======
->>>>>>> origin/main
     ports:
       - 9200:9200
       - 9600:9600
