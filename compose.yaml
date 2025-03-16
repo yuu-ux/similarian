@@ -15,7 +15,7 @@ services:
     environment:
       - OPENSEARCH_HOST=http://opensearch:9200
     volumes:
-      - ./:/app
+      - ./backend:/app
     expose:
       - 9000
     depends_on:
