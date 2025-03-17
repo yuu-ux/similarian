@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   gap: 1rem; /* ボタン間の間隔 */
-  background-color: #ddd;
+  background-color: #ffffff;  /* 背景色を白に変更 */
 
   border-bottom: 1.5px solid #89a0ab;
   transition: all 0.3s ease;
@@ -99,8 +99,8 @@
 
 /* ヘッダー内の開閉ボタン（サイドバーが閉じたとき用） */
 .toggle-button-header {
-  background-color: #ddd;
-  color: white;
+  background-color: #ffffff;
+  color: rgb(32, 32, 33);
   border: none;
   padding: 10px 15px;
   font-size: 30px;
