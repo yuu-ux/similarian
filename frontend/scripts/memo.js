@@ -134,6 +134,11 @@ window.setupMemo = function() {
 // メモリストを動的に生成する関数
 function generateMemoList() {
     const memoList = document.querySelector('.memo-list');
+    if (!memoList) {
+        console.error('メモリスト要素が見つかりません');
+        return;
+    }
+    
     memoList.innerHTML = ''; // 既存のメモをクリア
 
     memoData.forEach(memo => {
@@ -151,7 +156,7 @@ function generateMemoList() {
             <div class="memo-item-group-button">
                 <p>グループ</p>
                 <div class="memo-item-button">
-                    <button class="memo-item-button-edit">編集</button>
+                    <button class="memo-item-button-edit" onclick="event.stopPropagation(); startEdit(${memo.id})">編集</button>
                     <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
                 </div>
             </div>
@@ -162,7 +167,11 @@ function generateMemoList() {
 }
 
 // ページ読み込み時にメモリストを生成
-document.addEventListener('DOMContentLoaded', generateMemoList);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded: メモリストの生成を開始');
+    generateMemoList();
+    console.log('DOMContentLoaded: メモリストの生成が完了');
+});
 
 function openMemo(id) {
     const memoList = document.querySelector('.memo-list');
