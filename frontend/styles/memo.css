@@ -23,7 +23,6 @@
     flex-direction: column;
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.10); 
     border: 1px solid #ddd;
-    height: 100%;
     overflow: hidden;
     gap: 10px;
 }

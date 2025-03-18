@@ -10,8 +10,6 @@
 .main-content {
   margin-top: 80px;
   margin-left: 200px;
-  height: calc(100vh - 80px);
-  width: calc(100vw - 200px);
   box-sizing: border-box;
   flex-grow: 1;
   display: flex;
