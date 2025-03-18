@@ -6,23 +6,8 @@ window.setupHeader = function() {
   const newMemoBtn = document.getElementById("newMemoBtn");
   if (newMemoBtn) {
     newMemoBtn.addEventListener("click", () => {
-      // 新しいメモのデータを作成
-      const newMemo = {
-        id: Date.now(), // タイムスタンプをIDとして使用
-        title: "新しいメモ",
-        text: "# 新しいメモ\n\nここにメモの内容を入力してください。", // デフォルトのテキストを追加
-        group: "未分類",
-        date: new Date().toISOString().split('T')[0], // 日付を追加
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      // memo.jsの関数を呼び出して新しいメモを追加
-      if (window.addNewMemo) {
-        window.addNewMemo(newMemo);
-      } else {
-        console.error("memo.jsの関数が見つかりません");
-      }
+      // 編集画面を表示
+      window.toggleMemoEdit();
     });
   }
 

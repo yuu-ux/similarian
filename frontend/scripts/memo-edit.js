@@ -56,7 +56,39 @@ function setupMemoEdit() {
 
     // 保存ボタンのクリックイベント
     saveButton.addEventListener('click', () => {
-        console.log('保存ボタンがクリックされました');
+        const text = memoEditTextarea.value.trim();
+        if (!text) {
+            alert('メモの内容を入力してください');
+            return;
+        }
+
+        // 新しいメモを作成
+        const newMemo = {
+            id: memoData.length + 1,
+            date: new Date().toISOString().split('T')[0],
+            text: text,
+            group: '',
+            similarity: 0
+        };
+
+        // memoDataに追加
+        memoData.push(newMemo);
+
+        // ローカルストレージに保存
+        localStorage.setItem('memoData', JSON.stringify(memoData));
+
+        // メモリストを更新
+        if (window.generateMemoList) {
+            window.generateMemoList();
+        }
+
+        // 編集画面を閉じる
+        toggleMemoEdit();
+
+        // テキストエリアをクリア
+        memoEditTextarea.value = '';
+
+        console.log('新しいメモを保存しました');
     });
 
     console.log('メモ編集画面のセットアップが完了');
