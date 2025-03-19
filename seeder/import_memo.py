@@ -5,7 +5,7 @@ import hashlib
 # OpenSearch の設定
 OPENSEARCH_HOST = 'opensearch'
 OPENSEARCH_PORT = 9200
-INDEX_NAME = 'memos'
+INDEX_NAME = 'memo'
 ADMIN_USER = 'admin'
 ADMIN_PASSWORD = '514_YugaEhara'
 
