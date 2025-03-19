@@ -19,7 +19,7 @@ client = OpenSearch (
     verify_certs=False
 )
 
-INDEX_NAME = 'notes'
+INDEX_NAME = 'memos'
 
 @app.route('/', methods=['GET'])
 def index():
@@ -41,14 +41,14 @@ def create():
     return jsonify({'message': 'Note created', 'id': response['_id']})
 
 # データ取得（Read）
-@app.route('/notes/<note_id>', methods=['GET'])
-def get_note(note_id):
-    response = client.get(index=INDEX_NAME, id=note_id)
+@app.route('/memos/<memo_id>', methods=['GET'])
+def get_memo(memo_id):
+    response = client.get(index=INDEX_NAME, id=memo_id)
     return jsonify(response['_source'])
 
 # データ検索（全文検索）
-@app.route('/notes/search', methods=['GET'])
-def search_notes():
+@app.route('/memos/search', methods=['GET'])
+def search_memos():
     query_text = request.args.get('query', '')
     search_query = {
         'query': {
