@@ -69,11 +69,31 @@ def create():
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
 
-# データ取得（Read）
-@app.route('/memos/<memo_id>', methods=['GET'])
-def get_memo(memo_id):
-    response = client.get(index=INDEX_NAME, id=memo_id)
-    return jsonify(response['_source'])
+@app.route('/delete', methods=['POST'])
+def delete():
+    id = request.form.get('id')
+    try:
+        client.delete(INDEX_NAME, id)
+        return jsonify({'status': 'success', 'message': '削除しました'}), 201
+    except:
+        return jsonify({'status': 'error', 'message': '削除できませんでした'}), 400
+
+@app.route('/update', methods=['POST'])
+def update():
+    id = request.form.get('id')
+    text = request.form.get('text')
+    group = request.form.get('group')
+    data = {
+        'text': text,
+        'group': group,
+        'similarity': 0.11,
+        'modify_at': datetime.now().isoformat(),
+    }
+    try:
+        client.update(INDEX_NAME, id, body=data)
+        return jsonify({'status': 'success', 'message': '更新しました'}), 201
+    except:
+        return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
 
 # データ検索（全文検索）
 @app.route('/memos/search', methods=['GET'])
