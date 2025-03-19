@@ -12,13 +12,14 @@ async function getData() {
 }
 
 
+let memoData;
 window.setupMemo = async function() {
     console.log("✅ メモエリアのセットアップ完了");
 
     const memoList = document.querySelector('.memo-list');
     memoList.innerHTML = ''; // 既存のメモをクリア
 
-    const memoData = await getData();
+    memoData = await getData();
     memoData.forEach(memo => {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
@@ -45,7 +46,7 @@ window.setupMemo = async function() {
 };
 
 // メモリストを動的に生成する関数
-async function generateMemoList() {
+function generateMemoList() {
     const memoList = document.querySelector('.memo-list');
     memoList.innerHTML = ''; // 既存のメモをクリア
 
