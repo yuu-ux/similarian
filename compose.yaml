@@ -22,7 +22,7 @@ services:
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
     ports:
-      - "5601:5601"
+      - 5601:5601
     env_file:
       - .env
     environment:
@@ -34,12 +34,9 @@ services:
       - opensearch-net
     depends_on:
       - opensearch
-  
+
   app:
     build: .
-    environment:
-      - ADMIN_USER=${ADMIN_USER}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     volumes:
       - ./backend:/app/backend
       - ./.env:/app/backend/.env

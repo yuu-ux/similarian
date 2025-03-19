@@ -13,7 +13,7 @@ ADMIN_PASSWORD = '514_YugaEhara'
 client = OpenSearch (
     hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
     http_auth=(ADMIN_USER, ADMIN_PASSWORD),
-    use_ssl=True,
+    use_ssl=False,
     verify_certs=False
 )
 
