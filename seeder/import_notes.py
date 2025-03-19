@@ -5,7 +5,7 @@ import hashlib
 # OpenSearch の設定
 OPENSEARCH_HOST = 'opensearch'
 OPENSEARCH_PORT = 9200
-INDEX_NAME = 'memo'
+INDEX_NAME = 'notes'
 ADMIN_USER = 'admin'
 ADMIN_PASSWORD = '514_YugaEhara'
 
@@ -18,7 +18,7 @@ client = OpenSearch(
 )
 
 # サンプルデータ（追加するメンバー）
-memo_dict = [
+note_dict = [
     {
         'id': 1,
         'date': '2025-03-01',
@@ -120,17 +120,17 @@ memo_dict = [
 ]
 
 # メンバーをインポート
-for memo in memo_dict:
+for note in note_dict:
     doc = {
-        'id': memo['id'],
-        'date': memo['date'],
-        'text': memo['text'],
-        'group': memo['group'],
-        'similarity': memo['similarity'],
+        'id': note['id'],
+        'date': note['date'],
+        'text': note['text'],
+        'group': note['group'],
+        'similarity': note['similarity'],
         'create_at': datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S'),
         'update_at': datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
     }
 
-    response = client.index(index=INDEX_NAME, id=memo['id'], body=doc)
+    response = client.index(index=INDEX_NAME, id=note['id'], body=doc)
 
 print('Data import complete!')

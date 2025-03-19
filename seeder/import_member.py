@@ -10,7 +10,7 @@ ADMIN_USER = 'admin'
 ADMIN_PASSWORD = '514_YugaEhara'
 
 # 接続設定
-client = OpenSearch(
+client = OpenSearch (
     hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
     http_auth=(ADMIN_USER, ADMIN_PASSWORD),
     use_ssl=True,
