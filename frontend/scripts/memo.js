@@ -36,7 +36,7 @@ window.setupMemo = async function() {
                 <p>グループ</p>
                 <div class="memo-item-button">
                     <button class="memo-item-button-edit">編集</button>
-                    <button class="memo-item-button-delete">削除</button>
+                    <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
                 </div>
             </div>
         `;
@@ -66,7 +66,7 @@ function generateMemoList() {
                 <p>グループ</p>
                 <div class="memo-item-button">
                     <button class="memo-item-button-edit">編集</button>
-                    <button class="memo-item-button-delete">削除</button>
+                    <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
                 </div>
             </div>
         `;
@@ -140,4 +140,47 @@ function closeMemo() {
     memoList.classList.remove('hidden');
     memoEmb.classList.add('hidden');
 }
+
+// 新しいメモを追加する関数
+window.addNewMemo = function(newMemo) {
+  console.log("✅ 新しいメモの追加開始");
+
+  // メモデータに新しいメモを追加
+  memoData.push(newMemo);
+
+  // ローカルストレージに保存
+  localStorage.setItem('memoData', JSON.stringify(memoData));
+
+  // メモ一覧を更新
+  generateMemoList();
+
+  // 新しいメモを選択状態にする
+  openMemo(newMemo.id);
+
+  console.log("✅ 新しいメモの追加完了");
+};
+
+// メモを削除する関数
+window.deleteMemo = function(id) {
+    if (confirm('このメモを削除してもよろしいですか？')) {
+        console.log("✅ メモの削除開始");
+
+        // メモデータから該当のメモを削除
+        const index = memoData.findIndex(memo => memo.id === id);
+        if (index !== -1) {
+            memoData.splice(index, 1);
+
+            // ローカルストレージに保存
+            localStorage.setItem('memoData', JSON.stringify(memoData));
+
+            // メモ一覧を更新
+            generateMemoList();
+
+            // メモ詳細画面を閉じる
+            closeMemo();
+
+            console.log("✅ メモの削除完了");
+        }
+    }
+};
 

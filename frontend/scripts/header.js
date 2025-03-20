@@ -6,7 +6,8 @@ window.setupHeader = function() {
   const newMemoBtn = document.getElementById("newMemoBtn");
   if (newMemoBtn) {
     newMemoBtn.addEventListener("click", () => {
-      alert("新しいメモの作成画面を表示します");
+      // 編集画面を表示
+      window.toggleMemoEdit();
     });
   }
 
