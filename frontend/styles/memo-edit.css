@@ -1,0 +1,102 @@
+.memo-edit-container {
+    display: flex;
+    height: calc(100vh - 80px); /* ヘッダーの高さを引く値を60pxから80pxに修正 */
+    background-color: #ffffff;
+    overflow: hidden; /* コンテナ自体のスクロールを無効化 */
+}
+
+.memo-edit-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-right: 1px solid #e0e0e0;
+}
+
+.memo-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.memo-edit-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.memo-save-button {
+    padding: 8px 16px;
+    background-color: #4f83d1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+
+.memo-save-button:hover {
+    background-color: #4f83d1;
+}
+
+.memo-cancel-button {
+    padding: 8px 16px;
+    background-color: #f87c7c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-right: 40px;
+}
+
+.memo-cancel-button:hover {
+    background-color: #4f83d1;
+}
+
+.memo-edit-textarea {
+    flex: 1;
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: none;
+    overflow-y: auto; /* テキストエリアのスクロールは有効のまま */
+}
+
+.memo-edit-textarea:focus {
+    outline: none;
+    border-color: #4f83d1;
+}
+
+.memo-edit-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f9f9f9;
+    
+}
+
+.memo-preview-header {
+    margin-bottom: 20px;
+}
+
+.memo-preview-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.memo-preview {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: white;
+    overflow-y: auto; /* プレビューエリアのスクロールは有効のまま */
+} 

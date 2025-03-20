@@ -3,6 +3,8 @@ from opensearchpy import OpenSearch
 import os
 from dotenv import load_dotenv
 from datetime import timedelta, datetime
+import numpy as np
+from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 app = Flask(__name__)
@@ -22,6 +24,7 @@ client = OpenSearch (
     verify_certs=False
 )
 
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 INDEX_NAME = 'memo'
 
 @app.route('/', methods=['GET'])
@@ -48,18 +51,21 @@ def get_latest_id():
     response = client.search(index=INDEX_NAME, body=query)
     id = response['hits']['hits'][0]['_source']['id'] if response['hits']['hits'] else 1
     return int(id)
-# データ追加（Create）
+
 @app.route('/create', methods=['POST'])
 def create():
     text = request.form.get('memo', '')
     group = request.form.get('group', '')
     if not text:
         return jsonify({'status': 'error', 'message': 'メモの内容が空です'}), 400
+
+    vector = model.encode(text).tolist()
+
     data = {
         'id': get_latest_id() + 1,
         'text': text,
         'group': group,
-        'similarity': 0.11,
+        'vector': vector,
         'create_at': datetime.now().isoformat(),
         'modify_at': datetime.now().isoformat(),
     }
@@ -83,30 +89,51 @@ def update():
     id = request.form.get('id')
     text = request.form.get('text')
     group = request.form.get('group')
+
+    if id is None:
+        return jsonify({'status': 'error', 'message': '不正なリクエストです'})
+    vector = None
+    if text:
+        vector = model.encode(text).tolist()
+
     data = {
-        'text': text,
-        'group': group,
-        'similarity': 0.11,
-        'modify_at': datetime.now().isoformat(),
+        'doc' : {
+            'text': text if text else None,
+            'group': group if group else None,
+            'vector': vector if vector else None,
+            'modify_at': datetime.now().isoformat(),
+        },
     }
+
     try:
         client.update(INDEX_NAME, id, body=data)
         return jsonify({'status': 'success', 'message': '更新しました'}), 201
     except:
         return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
 
-# データ検索（全文検索）
-@app.route('/memos/search', methods=['GET'])
+# データ検索（k-NN検索）
+@app.route('/search', methods=['GET'])
 def search_memos():
-    query_text = request.args.get('query', '')
-    search_query = {
+    query_text = request.form.get('query')
+
+    # ベクトル化
+    query_vector = model.encode(query_text).tolist()
+
+    query = {
+        'size': 3,  # 取得する類似データ数
         'query': {
-            'match': {'content': query_text}
+            'knn': {
+                'vector': {
+                    'vector': query_vector,
+                    'k': 3,  # 近傍数
+                    'num_candidates': 10  # 精度向上のための候補数
+                }
+            }
         }
     }
-    response = client.search(index=INDEX_NAME, body=search_query)
-    results = [hit['_source'] for hit in response['hits']['hits']]
-    return jsonify(results)
+
+    response = client.search(index=INDEX_NAME, body=query)
+    return jsonify(response['hits']['hits'])
 
 if __name__ == '__main__':
     app.run()
