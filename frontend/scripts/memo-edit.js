@@ -2,6 +2,7 @@
 window.toggleMemoEdit = function() {
     const memoList = document.querySelector('.memo-list');
     const memoEditContainer = document.querySelector('.memo-edit-container');
+    const memoEmb = document.querySelector('.memo-emb');  // メモ詳細画面を取得
     
     if (!memoEditContainer) {
         // 編集コンテナが存在しない場合は作成
@@ -12,7 +13,10 @@ window.toggleMemoEdit = function() {
             <div class="memo-edit-left">
                 <div class="memo-edit-header">
                     <h2>メモを編集</h2>
-                    <button class="memo-save-button">保存</button>
+                    <div class="memo-edit-buttons">
+                    <button class="memo-cancel-button">キャンセル</button>
+                        <button class="memo-save-button">保存</button>
+                    </div>
                 </div>
                 <textarea id="memoEditTextarea" class="memo-edit-textarea" placeholder="Markdownでメモを書くことができます"></textarea>
             </div>
@@ -29,9 +33,13 @@ window.toggleMemoEdit = function() {
         setupMemoEdit();
     }
 
-    // 表示切り替え
-    if (memoList) memoList.classList.toggle('hidden');
-    if (memoEditContainer) memoEditContainer.classList.toggle('hidden');
+    // すべての画面を非表示にする
+    if (memoList) memoList.classList.add('hidden');
+    if (memoEmb) memoEmb.classList.add('hidden');
+    if (memoEditContainer) memoEditContainer.classList.add('hidden');
+    
+    // 編集画面のみを表示
+    if (memoEditContainer) memoEditContainer.classList.remove('hidden');
 };
 
 // メモ編集画面のセットアップ
@@ -43,8 +51,9 @@ window.setupMemoEdit = function() {
     const memoEditTextarea = document.getElementById('memoEditTextarea');
     const memoPreview = document.getElementById('memoPreview');
     const saveButton = document.querySelector('.memo-save-button');
+    const cancelButton = document.querySelector('.memo-cancel-button');
 
-    if (!memoEditContainer || !memoEditTextarea || !memoPreview || !saveButton) {
+    if (!memoEditContainer || !memoEditTextarea || !memoPreview || !saveButton || !cancelButton) {
         console.error('必要なDOM要素が見つかりません');
         return;
     }
@@ -52,6 +61,21 @@ window.setupMemoEdit = function() {
     // テキストエリアの入力イベント
     memoEditTextarea.addEventListener('input', () => {
         memoPreview.innerHTML = marked.parse(memoEditTextarea.value);
+    });
+
+    // キャンセルボタンのクリックイベント
+    cancelButton.addEventListener('click', () => {
+        // メモ一覧を表示
+        const memoList = document.querySelector('.memo-list');
+        if (memoList) memoList.classList.remove('hidden');
+        
+        // 編集画面とメモ詳細画面を非表示
+        if (memoEditContainer) memoEditContainer.classList.add('hidden');
+        const memoEmb = document.querySelector('.memo-emb');
+        if (memoEmb) memoEmb.classList.add('hidden');
+        
+        // テキストエリアをクリア
+        memoEditTextarea.value = '';
     });
 
     // 保存ボタンのクリックイベント
@@ -76,8 +100,15 @@ window.setupMemoEdit = function() {
                 // 成功したらメモ一覧を更新
                 if (window.setupMemo) {
                     window.setupMemo().then(() => {
-                        // 編集画面を閉じる
-                        toggleMemoEdit();
+                        // メモ一覧を表示
+                        const memoList = document.querySelector('.memo-list');
+                        if (memoList) memoList.classList.remove('hidden');
+                        
+                        // 編集画面とメモ詳細画面を非表示
+                        if (memoEditContainer) memoEditContainer.classList.add('hidden');
+                        const memoEmb = document.querySelector('.memo-emb');
+                        if (memoEmb) memoEmb.classList.add('hidden');
+                        
                         // テキストエリアをクリア
                         memoEditTextarea.value = '';
                     });
