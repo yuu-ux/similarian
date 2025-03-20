@@ -2,3 +2,5 @@ Flask
 gunicorn
 opensearch-py
 python-dotenv
+numpy
+sentence-transformers
