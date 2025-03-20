@@ -9,13 +9,20 @@ services:
     ports:
       - 9200:9200
       - 9600:9600
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
     networks:
       - opensearch-net
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
     ports:
-      - "5601:5601"
+      - 5601:5601
     env_file:
       - .env
     environment:
@@ -27,13 +34,14 @@ services:
       - opensearch-net
     depends_on:
       - opensearch
-  
+
   app:
     build: .
-    environment:
-      - OPENSEARCH_HOST=http://opensearch:9200
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
+      - ./.env:/app/backend/.env
+      - ./seeder:/app/seeder
+      - opensearch-data1:/usr/share/opensearch/data
     expose:
       - 9000
     depends_on:
@@ -60,3 +68,6 @@ services:
 networks:
   opensearch-net:
     driver: bridge
+
+volumes:
+  opensearch-data1:

@@ -62,33 +62,34 @@ function setupMemoEdit() {
             return;
         }
 
-        // 新しいメモを作成
-        const newMemo = {
-            id: memoData.length + 1,
-            date: new Date().toISOString().split('T')[0],
-            text: text,
-            group: '',
-            similarity: 0
-        };
-
-        // memoDataに追加
-        memoData.push(newMemo);
-
-        // ローカルストレージに保存
-        localStorage.setItem('memoData', JSON.stringify(memoData));
-
-        // メモリストを更新
-        if (window.generateMemoList) {
-            window.generateMemoList();
-        }
-
-        // 編集画面を閉じる
-        toggleMemoEdit();
-
-        // テキストエリアをクリア
-        memoEditTextarea.value = '';
-
-        console.log('新しいメモを保存しました');
+        const formData = new FormData();
+        formData.append("memo", text);
+        formData.append("group", ""); // 必要なら別途 UI でグループを入力       
+        fetch("http://localhost:5000/create", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert(data.message);
+                // 成功したらメモ一覧を更新
+                if (window.setupMemo) {
+                    window.setupMemo().then(() => {
+                        // 編集画面を閉じる
+                        toggleMemoEdit();
+                        // テキストエリアをクリア
+                        memoEditTextarea.value = '';
+                    });
+                }
+            } else {
+                alert("メモの登録に失敗しました: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("メモ登録エラー:", error);
+            alert("メモの登録中にエラーが発生しました");
+        });
     });
 
     console.log('メモ編集画面のセットアップが完了');

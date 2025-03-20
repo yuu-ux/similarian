@@ -1,3 +1,5 @@
 Flask
+Flask-Cors
 gunicorn
 opensearch-py
+python-dotenv
