@@ -1,0 +1,204 @@
+@import url(normalize.css);
+
+:root {
+    background-color: #ffffff;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #28496b;
+    font-size: 1.8rem;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    max-width: none;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10%;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../assets/logo.PNG') no-repeat center 50%;
+    background-size: 30%;
+    opacity: 0.7;
+    animation: float 12s infinite ease-in-out;
+    pointer-events: none;
+}
+
+.container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../assets/namisen.webp') no-repeat center 50%;
+    background-size: contain;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.container-new {
+    width: 100%;
+    height: 100vh;
+    max-width: none;
+    background-color: #ffffffd0;
+    padding: 40px;
+    border-radius: 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10%;
+}
+
+.container-new::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../assets/logo.PNG') no-repeat center 50%;
+    background-size: 30%;
+    opacity: 0.7;
+    animation: float 12s infinite ease-in-out;
+    pointer-events: none;
+}
+
+.container-new::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../assets/namisen.webp') no-repeat center 50%;
+    background-size: contain;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+
+.form {
+    margin-top: 5%;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+    position: relative;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    border: 1px solid #6774ad;
+    border-radius: 5px;
+    padding: 15px 15px 15px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.login-title {
+    position: relative;
+    z-index: 1;
+}
+
+label {
+    position: absolute;
+    left: 10px;
+    top: -10px;
+    background-color: white;
+    padding: 0 5px;
+    font-size: 14px;
+    color: #666;
+    font-weight: normal;
+}
+
+button {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 15px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.5s;
+    position: relative;
+    z-index: 1;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.radio-group ,
+.checkbox-group {
+    display: flex;
+    gap: 10px;
+}
+
+@keyframes float {
+    0% {
+        transform: translateX(100%) translateY(0%) rotate(5deg);
+        opacity: 0.7;
+    }
+    10% {
+        opacity: 0.7;
+        transform: translateX(60%) translateY(0%) rotate(3deg);
+    }
+    20% {
+        opacity: 0.7;
+        transform: translateX(60%) translateY(0%) rotate(3deg);
+    }
+    40% {
+        transform: translateX(20%) translateY(0%) rotate(-2deg);
+        opacity: 0.7;
+    }
+    60% {
+        transform: translateX(-20%) translateY(0%) rotate(2deg);
+        opacity: 0.7;
+    }
+    80% {
+        opacity: 0.7;
+        transform: translateX(-60%) translateY(0%) rotate(-3deg);
+    }
+    100% {
+        transform: translateX(-100%) translateY(0%) rotate(-5deg);
+        opacity: 0.7;
+    }
+}
+
