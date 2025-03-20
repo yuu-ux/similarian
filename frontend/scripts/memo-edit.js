@@ -5,7 +5,6 @@ window.toggleMemoEdit = function() {
     const memoEmb = document.querySelector('.memo-emb');  // メモ詳細画面を取得
     
     if (!memoEditContainer) {
-        // 編集コンテナが存在しない場合は作成
         const main = document.getElementById('main');
         const editContainer = document.createElement('div');
         editContainer.className = 'memo-edit-container';
@@ -14,7 +13,7 @@ window.toggleMemoEdit = function() {
                 <div class="memo-edit-header">
                     <h2>メモを編集</h2>
                     <div class="memo-edit-buttons">
-                    <button class="memo-cancel-button">キャンセル</button>
+                        <button class="memo-cancel-button">キャンセル</button>
                         <button class="memo-save-button">保存</button>
                     </div>
                 </div>
@@ -29,8 +28,10 @@ window.toggleMemoEdit = function() {
         `;
         main.appendChild(editContainer);
         
-        // 編集画面のセットアップ
-        setupMemoEdit();
+        // DOMが追加されたことを確認してからセットアップを実行
+        requestAnimationFrame(() => {
+            setupMemoEdit();
+        });
     }
 
     // すべての画面を非表示にする
@@ -53,8 +54,28 @@ window.setupMemoEdit = function() {
     const saveButton = document.querySelector('.memo-save-button');
     const cancelButton = document.querySelector('.memo-cancel-button');
 
-    if (!memoEditContainer || !memoEditTextarea || !memoPreview || !saveButton || !cancelButton) {
-        console.error('必要なDOM要素が見つかりません');
+    // if (!memoEditContainer || !memoEditTextarea || !memoPreview || !saveButton || !cancelButton) {
+    //     console.error('必要なDOM要素が見つかりません');
+    //     return;
+    // }
+    if (!memoEditContainer) {
+        console.error('memoEditContainer DOM要素が見つかりません');
+        return;
+    }
+    if (!memoEditTextarea) {
+        console.error('memoEditTextarea DOM要素が見つかりません');
+        return;
+    }
+    if (!memoPreview) {
+        console.error('memoPreview DOM要素が見つかりません');
+        return;
+    }
+    if (!saveButton) {
+        console.error('saveButton DOM要素が見つかりません');
+        return;
+    }
+    if (!cancelButton) {
+        console.error('cancelButton DOM要素が見つかりません');
         return;
     }
 
@@ -128,30 +149,5 @@ window.setupMemoEdit = function() {
 
 // ページ読み込み時に編集画面のセットアップを実行
 document.addEventListener('DOMContentLoaded', () => {
-    // 編集コンテナが存在しない場合は作成
-    const memoEditContainer = document.querySelector('.memo-edit-container');
-    if (!memoEditContainer) {
-        const main = document.getElementById('main');
-        const editContainer = document.createElement('div');
-        editContainer.className = 'memo-edit-container';
-        editContainer.innerHTML = `
-            <div class="memo-edit-left">
-                <div class="memo-edit-header">
-                    <h2>メモを編集</h2>
-                    <button class="memo-save-button">保存</button>
-                </div>
-                <textarea id="memoEditTextarea" class="memo-edit-textarea" placeholder="Markdownでメモを書くことができます"></textarea>
-            </div>
-            <div class="memo-edit-right">
-                <div class="memo-preview-header">
-                    <h2>プレビュー</h2>
-                </div>
-                <div id="memoPreview" class="memo-preview"></div>
-            </div>
-        `;
-        main.appendChild(editContainer);
-    }
-    
-    // 編集画面のセットアップを実行
-    window.setupMemoEdit();
+    // 代わりに toggleMemoEdit 関数で DOM を作成・設定します
 }); 
