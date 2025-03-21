@@ -75,6 +75,49 @@ def create():
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
 
+@app.route('/register', methods=['POST'])
+def register():
+    name = request.form.get('myname')
+    email = request.form.get('email')
+    if not name or not email:
+        return jsonify({'status': 'error', 'message': '氏名とメールアドレスを入力してください'}), 400
+    data = {
+        'name': name,
+        'email': email,
+        'created_at': datetime.now().isoformat()
+    }
+
+    try:
+        client.index(index='users', body=data)        
+        return jsonify({'status': 'success', 'message': 'ユーザー登録に成功しました'}), 201
+    except Exception as e:
+        return jsonify({'status': 'success', 'message': '登録に失敗しました'}), 500
+
+@app.login('/login', methods=['POST'])
+def login():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    if not email or not password:
+        return jsonify(['status': 'error', 'message': 'メールアドレスとパスワードを入力してください'])
+    
+    #OpenSearchでメールアドレスとパスワードを入力
+    query = {
+        'query': {
+            'match': {
+                'email': email
+                'password': password
+            }
+        }
+    }
+
+    try:
+        response = client.search(index='users', body=query)
+        hits = response['hits']['hits']
+        if not hits:
+            return jsonify({'status': 'error', 'message': 'ユーザーが見つかりませんでした'}), 404
+        return jsonify(['status': 'success', 'message': 'ログイン成功しました'])
+
 @app.route('/delete', methods=['POST'])
 def delete():
     id = request.form.get('id')
@@ -110,6 +153,7 @@ def update():
         return jsonify({'status': 'success', 'message': '更新しました'}), 201
     except:
         return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
+
 
 # データ検索（k-NN検索）
 @app.route('/search', methods=['GET'])
