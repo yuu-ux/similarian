@@ -6,7 +6,7 @@
 
 .memo-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-auto-rows: calc((100vh - 40px) / 2);
     gap: 20px;
     padding: 20px;
@@ -14,17 +14,15 @@
 }
 
 .memo-item {
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 15px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.10); 
-    border: 1px solid #ddd;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    min-width: 0;
     overflow: hidden;
-    gap: 10px;
 }
 
 .memo-item-textdata {
@@ -35,8 +33,10 @@
     line-clamp: 10;
     -webkit-box-orient: vertical;
     line-height: 1.8;
-    max-height: calc(1.5em * 10); /* 3行分の高さを指定 */
-    font-size: 16px; /* テキストサイズを調整 */
+    max-height: calc(1.5em * 20);
+    font-size: 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .memo-item-group,
@@ -45,25 +45,29 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 18px; /* グループ名のサイズを調整 */
-    color: #4f83d1; /* グループ名の色を変更 */
+    font-size: 18px;
+    color: #4f83d1;
 }
 
 .memo-item-group-button {
+    padding: 12px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-top: auto;
-    padding-top: 10px;
 }
 
 .memo-item-button {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    padding: 5px;
+    gap: 8px;
 }
 
 .memo-item-button-edit,
 .memo-item-button-delete {
-    background-color: #d65757;
+    background-color: #4f83d1;
     padding: 8px 12px;
     border-radius: 5px;
     font-size: 14px;
@@ -173,6 +177,7 @@
     white-space: nowrap;
     font-size: 18px;
     color: #4f83d1;
+    width: 100%;
 }
 
 .side-memo-item:hover {
@@ -297,8 +302,19 @@
     color: rgba(39, 36, 36, 0.603);
     border: none;
     font-weight: bold;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 20px;
+    flex: 1;
+}
+
+.memo-item-button-delete {
+    background-color: #f4433680;
+    color: rgba(39, 36, 36, 0.603);
+    font-weight: bold;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
 }
 
 @media (max-width: 1200px) {
@@ -308,104 +324,287 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     .memo-list {
         grid-template-columns: 1fr;
         grid-auto-rows: calc((100vh - 40px) / 2);
     }
 }
 
-/* 吹き出しモーダル */
-.group-edit-modal {
-    position: fixed;
+/* ポップオーバースタイル */
+.popover {
+    display: none;
+    position: absolute;
     background: white;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     z-index: 1000;
-    min-width: 200px;
-    transform: translateY(10px);
 }
 
-.group-edit-modal input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
+.popover::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 10px 10px 10px;
+    border-style: solid;
+    border-color: transparent transparent white transparent;
+}
+
+.popover.show {
+    display: block;
+}
+
+.group-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.group-edit-form input {
+    padding: 5px;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.group-edit-modal button {
-    width: 100%;
-    padding: 8px;
-    background: #3498db;
+.group-edit-form button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
-.group-edit-modal button:hover {
-    background: #2980b9;
+.group-edit-form button:hover {
+    background-color: #45a049;
 }
 
-/* 削除ボタンのスタイル */
-.group-edit-modal button.delete-button {
-    background: #d65757;
-}
-
-.group-edit-modal button.delete-button:hover {
-    background: #c44a4a;
-}
-
-.existing-memo-list {
-    max-height: 200px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin: 10px 0;
-}
-
-.group-select-item {
+.group-buttons-container {
     display: flex;
-    align-items: center;
-    padding: 8px;
-    margin: 4px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    position: relative;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
     width: 100%;
-    box-sizing: border-box;
 }
 
-.group-select-item:hover {
-    background-color: #f5f5f5;
+.group-management {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.group-select-item.selected {
-    background-color: #e3f2fd;
-    border-color: #4f83d1;
+.group-section {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 16px;
 }
 
-.group-select-item input[type="checkbox"] {
-    position: absolute;
-    left: 8px;
-    margin: 0;
+.group-section-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.group-action-main-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.group-action-main-button.add {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.group-action-main-button.remove {
+    background-color: #f44336;
+    color: white;
+}
+
+.group-action-main-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
     opacity: 0.7;
 }
 
-.group-select-item label {
-    margin-left: 28px;
+.group-select-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    position: relative;
+    text-align: left;
+    width: 100%;
+}
+
+.group-select-button::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #4f83d1;
+    border-radius: 3px;
+    margin-right: 8px;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.group-select-button.selected::before {
+    background-color: #4f83d1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+    background-size: 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.group-select-button:hover {
+    background-color: #f5f5f5;
+}
+
+.group-select-button.selected {
+    background-color: #f0f7ff;
+    border-color: #4f83d1;
+}
+
+.group-action-buttons {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.group-select-button:hover .group-action-buttons {
+    opacity: 1;
+}
+
+.group-action-button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.group-action-button.add {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.group-action-button.remove {
+    background-color: #f44336;
+    color: white;
+}
+
+.group-action-button:hover {
+    opacity: 0.8;
+}
+
+.save-groups-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4f83d1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 16px;
+    transition: background-color 0.2s ease;
+}
+
+.save-groups-button:hover {
+    background-color: #3d6db3;
+}
+
+.popover {
+    min-width: 280px;
+    max-width: 320px;
+    padding: 16px;
+}
+
+.group-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.memo-content-area {
     flex: 1;
     cursor: pointer;
-}
-
-.group-edit-modal-button {
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    min-height: 0;
+    overflow: hidden;
 }
 
+.memo-content-area:hover {
+    background-color: #f5f5f5;
+}
 
+.new-group-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.new-group-form {
+    display: flex;
+    gap: 8px;
+}
+
+.new-group-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.new-group-input:focus {
+    outline: none;
+    border-color: #4f83d1;
+}
+
+.new-group-button {
+    padding: 8px 16px;
+    background-color: #4f83d1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.new-group-button:hover {
+    background-color: #3d6db3;
+}
+
+.new-group-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
