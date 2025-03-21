@@ -241,7 +241,7 @@ const availableGroups = [
 ];
 
 // ポップオーバーを表示する関数
-function showGroupEditPopover(button, memoId) {
+window.showGroupEditPopover = function(button, memoId) {
     const popover = document.getElementById(`popover-${memoId}`);
     const memo = memoData.find(m => m.id === memoId);
     const currentGroups = memo.group ? memo.group.split(',').map(g => g.trim()) : [];
@@ -329,7 +329,7 @@ function showGroupEditPopover(button, memoId) {
 }
 
 // グループの選択状態を切り替える
-function toggleGroupSelection(button, memoId) {
+window.toggleGroupSelection = function(button, memoId) {
     button.classList.toggle('selected');
     
     // 親セクションの追加/削除ボタンの状態を更新
@@ -407,7 +407,7 @@ function closePopoverOnClickOutside(event) {
 }
 
 // 新規グループ名の入力を検証
-function validateNewGroup(input) {
+window.validateNewGroup = function(input) {
     const button = input.nextElementSibling;
     const groupName = input.value.trim();
     
@@ -417,7 +417,7 @@ function validateNewGroup(input) {
 }
 
 // 新規グループを作成
-function createNewGroup(button, memoId) {
+window.createNewGroup = function(button, memoId) {
     const input = button.previousElementSibling;
     const groupName = input.value.trim();
     
@@ -434,3 +434,7 @@ function createNewGroup(button, memoId) {
         showGroupEditPopover(editButton, memoId);
     }
 }
+
+// グループ関連の他の関数もグローバルに公開
+window.addSelectedGroups = addSelectedGroups;
+window.removeFromSelectedGroups = removeFromSelectedGroups;
