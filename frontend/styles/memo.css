@@ -22,8 +22,24 @@
     transition: background-color 0.2s;
 }
 
+.memo-item-group-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.memo-item-group {
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px;
+    color: #4f83d1;
+    flex: 1;
+}
+
 .memo-checkbox-area {
-    padding-right: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,6 +52,8 @@
     border: 2px solid #666;
     border-radius: 3px;
     transition: all 0.2s;
+    margin: 0;
+    padding: 0;
 }
 
 .memo-checkbox:checked {
@@ -58,21 +76,6 @@
     line-height: 1.8;
     max-height: calc(1.5em * 10); /* 3行分の高さを指定 */
     font-size: 16px; /* テキストサイズを調整 */
-}
-
-.memo-item-group,
-.memo-detail-group-text {
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 18px; /* グループ名のサイズを調整 */
-    color: #4f83d1; /* グループ名の色を変更 */
-}
-
-.memo-item-group-button {
-    margin-top: auto;
-    padding-top: 10px;
 }
 
 .memo-item-button {
@@ -185,15 +188,6 @@
     font-size: inherit;
     font-weight: normal;
     display: inline;
-}
-
-.side-memo-item-group {
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 18px;
-    color: #4f83d1;
 }
 
 .side-memo-item:hover {

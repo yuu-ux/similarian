@@ -27,18 +27,6 @@ window.setupMemo = async function() {
         memoItem.className = 'memo-item';
         memoItem.setAttribute('data-id', memo.id);
 
-        // チェックボックスエリアの作成
-        const checkboxArea = document.createElement('div');
-        checkboxArea.className = 'memo-checkbox-area';
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'memo-checkbox';
-        checkbox.onclick = (e) => {
-            e.stopPropagation(); // メモの開閉イベントを防ぐ
-            toggleMemoSelection(memo.id);
-        };
-        checkboxArea.appendChild(checkbox);
-
         // メモアイテムのクリックイベントを分離
         const memoContent = document.createElement('div');
         memoContent.className = 'memo-content-area';
@@ -48,8 +36,31 @@ window.setupMemo = async function() {
         previewText = firstParagraph;
 
         // メモの内容部分のHTML
-        memoContent.innerHTML = `
-            <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
+        const groupArea = document.createElement('div');
+        groupArea.className = 'memo-item-group-area';
+
+        const groupText = document.createElement('div');
+        groupText.className = 'memo-item-group';
+        groupText.textContent = memo.group || 'グループデータがありません';
+
+        // チェックボックスエリアの作成
+        const checkboxArea = document.createElement('div');
+        checkboxArea.className = 'memo-checkbox-area';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'memo-checkbox';
+        checkbox.checked = selectedMemos.has(memo.id);
+        checkbox.onclick = (e) => {
+            e.stopPropagation(); // メモの開閉イベントを防ぐ
+            toggleMemoSelection(memo.id);
+        };
+        checkboxArea.appendChild(checkbox);
+
+        groupArea.appendChild(groupText);
+        groupArea.appendChild(checkboxArea);
+
+        memoContent.appendChild(groupArea);
+        memoContent.innerHTML += `
             <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
         `;
 
@@ -65,7 +76,6 @@ window.setupMemo = async function() {
         `;
 
         // 要素を組み立てる
-        memoItem.appendChild(checkboxArea);
         memoItem.appendChild(memoContent);
         memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
@@ -126,8 +136,18 @@ async function generateMemoList() {
         previewText = firstParagraph;
 
         // メモの内容部分のHTML
-        memoContent.innerHTML = `
-            <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
+        const groupArea = document.createElement('div');
+        groupArea.className = 'memo-item-group-area';
+
+        const groupText = document.createElement('div');
+        groupText.className = 'memo-item-group';
+        groupText.textContent = memo.group || 'グループデータがありません';
+
+        groupArea.appendChild(groupText);
+        groupArea.appendChild(checkboxArea);
+
+        memoContent.appendChild(groupArea);
+        memoContent.innerHTML += `
             <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
         `;
 
@@ -143,7 +163,6 @@ async function generateMemoList() {
         `;
 
         // 要素を組み立てる
-        memoItem.appendChild(checkboxArea);
         memoItem.appendChild(memoContent);
         memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
