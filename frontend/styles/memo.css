@@ -14,12 +14,17 @@
 }
 
 .memo-item {
-    display: flex;
-    align-items: flex-start;
+    background-color: #ffffff;
     padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.10); 
+    border: 1px solid #ddd;
+    overflow: hidden;
+    gap: 10px;
 }
 
 .memo-item-group-area {
@@ -64,6 +69,8 @@
 .memo-content-area {
     flex-grow: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .memo-item-textdata {
@@ -74,14 +81,21 @@
     line-clamp: 10;
     -webkit-box-orient: vertical;
     line-height: 1.8;
-    max-height: calc(1.5em * 10); /* 3行分の高さを指定 */
-    font-size: 16px; /* テキストサイズを調整 */
+    max-height: calc(1.5em * 10);
+    font-size: 16px;
+}
+
+.memo-item-group-button {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
 }
 
 .memo-item-button {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
     align-items: center;
+    gap: 10px;
     padding: 5px;
 }
 
@@ -312,8 +326,19 @@
     color: rgba(39, 36, 36, 0.603);
     border: none;
     font-weight: bold;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 20px;
+    font-size: 14px;
+}
+
+.memo-item-button-delete {
+    background-color: #d65757;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
 @media (max-width: 1200px) {

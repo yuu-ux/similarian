@@ -59,10 +59,12 @@ window.setupMemo = async function() {
         groupArea.appendChild(groupText);
         groupArea.appendChild(checkboxArea);
 
+        const textData = document.createElement('div');
+        textData.className = 'memo-item-textdata';
+        textData.innerHTML = marked.parse(previewText) || 'メモデータがありません';
+
         memoContent.appendChild(groupArea);
-        memoContent.innerHTML += `
-            <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
-        `;
+        memoContent.appendChild(textData);
 
         // グループ編集部分のHTML
         const groupEditArea = document.createElement('div');
