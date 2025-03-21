@@ -13,6 +13,8 @@ async function getData() {
 
 
 let memoData;
+let selectedMemos = new Set(); // 選択されたメモのIDを管理
+
 window.setupMemo = async function() {
     console.log("✅ メモエリアのセットアップ完了");
 
@@ -24,26 +26,72 @@ window.setupMemo = async function() {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
         memoItem.setAttribute('data-id', memo.id);
-        memoItem.onclick = () => openMemo(memo.id);
+
+        // チェックボックスエリアの作成
+        const checkboxArea = document.createElement('div');
+        checkboxArea.className = 'memo-checkbox-area';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'memo-checkbox';
+        checkbox.onclick = (e) => {
+            e.stopPropagation(); // メモの開閉イベントを防ぐ
+            toggleMemoSelection(memo.id);
+        };
+        checkboxArea.appendChild(checkbox);
+
+        // メモアイテムのクリックイベントを分離
+        const memoContent = document.createElement('div');
+        memoContent.className = 'memo-content-area';
+        memoContent.onclick = () => openMemo(memo.id);
 
         const firstParagraph = memo.text;
         previewText = firstParagraph;
 
-        memoItem.innerHTML = `
+        // メモの内容部分のHTML
+        memoContent.innerHTML = `
             <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
             <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
-            <div class="memo-item-group-button">
-                <p>グループ</p>
-                <div class="memo-item-button">
-                    <button class="memo-item-button-edit">編集</button>
-                    <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
-                </div>
-            </div>
         `;
 
+        // グループ編集部分のHTML
+        const groupEditArea = document.createElement('div');
+        groupEditArea.className = 'memo-item-group-button';
+        groupEditArea.innerHTML = `
+            <div class="memo-item-button">
+                <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo.id})">グループ編集</button>
+                <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">メモ削除</button>
+            </div>
+            <div class="popover" id="popover-${memo.id}"></div>
+        `;
+
+        // 要素を組み立てる
+        memoItem.appendChild(checkboxArea);
+        memoItem.appendChild(memoContent);
+        memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 };
+
+// メモの選択状態を切り替える関数
+function toggleMemoSelection(memoId) {
+    const checkbox = document.querySelector(`.memo-item[data-id="${memoId}"] .memo-checkbox`);
+    if (selectedMemos.has(memoId)) {
+        selectedMemos.delete(memoId);
+        checkbox.checked = false;
+    } else {
+        selectedMemos.add(memoId);
+        checkbox.checked = true;
+    }
+    updateSelectionUI();
+}
+
+// 選択状態のUIを更新する関数
+function updateSelectionUI() {
+    const selectedCount = selectedMemos.size;
+    // ここで選択されたメモの数に応じてUIを更新
+    // 例：ヘッダーに選択数を表示したり、一括操作ボタンの表示/非表示を切り替えたりする
+    console.log(`${selectedCount}件のメモが選択されています`);
+}
 
 // メモリストを動的に生成する関数
 async function generateMemoList() {
@@ -55,23 +103,49 @@ async function generateMemoList() {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
         memoItem.setAttribute('data-id', memo.id);
-        memoItem.onclick = () => openMemo(memo.id);
+
+        // チェックボックスエリアの作成
+        const checkboxArea = document.createElement('div');
+        checkboxArea.className = 'memo-checkbox-area';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'memo-checkbox';
+        checkbox.checked = selectedMemos.has(memo.id);
+        checkbox.onclick = (e) => {
+            e.stopPropagation();
+            toggleMemoSelection(memo.id);
+        };
+        checkboxArea.appendChild(checkbox);
+
+        // メモアイテムのクリックイベントを分離
+        const memoContent = document.createElement('div');
+        memoContent.className = 'memo-content-area';
+        memoContent.onclick = () => openMemo(memo.id);
 
         const firstParagraph = memo.text;
         previewText = firstParagraph;
 
-        memoItem.innerHTML = `
+        // メモの内容部分のHTML
+        memoContent.innerHTML = `
             <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
             <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
-            <div class="memo-item-group-button">
-                <p>グループ</p>
-                <div class="memo-item-button">
-                    <button class="memo-item-button-edit">編集</button>
-                    <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
-                </div>
-            </div>
         `;
 
+        // グループ編集部分のHTML
+        const groupEditArea = document.createElement('div');
+        groupEditArea.className = 'memo-item-group-button';
+        groupEditArea.innerHTML = `
+            <div class="memo-item-button">
+                <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo.id})">グループ編集</button>
+                <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">メモ削除</button>
+            </div>
+            <div class="popover" id="popover-${memo.id}"></div>
+        `;
+
+        // 要素を組み立てる
+        memoItem.appendChild(checkboxArea);
+        memoItem.appendChild(memoContent);
+        memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 }
