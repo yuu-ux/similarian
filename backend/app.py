@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from datetime import timedelta, datetime
 import numpy as np
 from sentence_transformers import SentenceTransformer
+import boto3
+import json
 
 load_dotenv()
 app = Flask(__name__)
@@ -26,6 +28,9 @@ client = OpenSearch (
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 INDEX_NAME = 'memo'
+
+# Bedrockのクライアントを作成
+bedrock_client = boto3.client('bedrock', region_name='us-west-2')  # 適切なリージョンを指定
 
 @app.route('/', methods=['GET'])
 def index():
@@ -133,6 +138,53 @@ def search_memos():
     }
     response = client.search(index=INDEX_NAME, body=query)
     return jsonify(response['hits']['hits'])
+
+@app.route('/sendTexts', methods=['POST'])
+def send_texts():
+    data = request.json
+    texts = data.get('texts', [])
+    
+    # 受け取ったテキストをログに表示
+    print("受け取ったテキスト:", texts)
+
+    # Bedrock APIを呼び出すためのリクエストボディを準備
+    request_body = {
+        "modelId": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+        "contentType": "application/json",
+        "accept": "application/json",
+        "body": {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 200,
+            "top_k": 250,
+            "stop_sequences": [],
+            "temperature": 1,
+            "top_p": 0.999,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": " ".join(texts)  # 受け取ったテキストを結合して送信
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+    # Bedrock APIを呼び出す
+    try:
+        response = bedrock_client.invoke_model(**request_body)
+        response_body = json.loads(response['body'].read())
+        
+        # 生成されたテキストを取得
+        generated_text = response_body.get('generated_text', '生成されたテキストがありません。')
+
+        return jsonify({'status': 'success', 'message': 'テキストを受け取りました', 'generated_text': generated_text})
+    except Exception as e:
+        print("エラー:", e)
+        return jsonify({'status': 'error', 'message': 'テキストの生成に失敗しました'}), 500
 
 if __name__ == '__main__':
     app.run()

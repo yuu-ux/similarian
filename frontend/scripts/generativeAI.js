@@ -41,6 +41,34 @@ function toggleAI() {
 
 // 選択されたテキストをバックエンドに渡す関数
 function sendSelectedTextToBackend() {
-    // ここに処理を追加
-    console.log("選択されたテキストをバックエンドに渡す");
+  const selectedTexts = Array.from(selectedMemos).map(id => {
+      const selectedMemo = memoData.find(m => m.id === id);
+      return selectedMemo ? selectedMemo.text : null; // メモのテキストを取得
+  }).filter(text => text !== null); // nullを除外
+
+  if (selectedTexts.length > 0) {
+      // バックエンドに送信するためのデータを準備
+      const payload = {
+          texts: selectedTexts
+      };
+
+      // バックエンドにPOSTリクエストを送信
+      fetch("http://localhost:8001/api/sendTexts", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log("バックエンドからの応答:", data);
+          // 必要に応じて、成功メッセージやエラーメッセージを表示
+      })
+      .catch(error => {
+          console.error("エラー:", error);
+      });
+  } else {
+      console.log("選択されたメモがありません。");
+  }
 }
