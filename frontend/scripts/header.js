@@ -22,7 +22,7 @@ window.setupHeader = function() {
   // 検索機能のセットアップ
   const searchInput = document.getElementById("searchInput");
   const searchHistory = document.getElementById("searchHistory");
-  
+
   // ローカルストレージから検索履歴を取得
   let searchHistoryItems = JSON.parse(localStorage.getItem("searchHistory") || "[]");
 
@@ -36,7 +36,7 @@ window.setupHeader = function() {
         </div>
       `)
       .join("");
-    
+
     searchHistory.classList.add("active");
   }
 
@@ -48,15 +48,15 @@ window.setupHeader = function() {
   // 検索履歴に追加する関数
   function addToSearchHistory(searchTerm) {
     if (!searchTerm.trim()) return;
-    
+
     // 重複を削除し、先頭に追加
     searchHistoryItems = [searchTerm, ...searchHistoryItems.filter(item => item !== searchTerm)];
-    
+
     // 最大10件まで保存
     if (searchHistoryItems.length > 10) {
       searchHistoryItems = searchHistoryItems.slice(0, 10);
     }
-    
+
     // ローカルストレージに保存
     localStorage.setItem("searchHistory", JSON.stringify(searchHistoryItems));
   }
@@ -68,15 +68,27 @@ window.setupHeader = function() {
     });
 
     // 検索実行時
-    searchInput.addEventListener("keypress", (event) => {
-      if (event.key === "Enter") {
-        const searchTerm = event.target.value.trim();
-        if (searchTerm) {
-          console.log("検索キーワード:", searchTerm);
-          addToSearchHistory(searchTerm);
-          showSearchHistory(); // 履歴を更新して表示
+    searchInput.addEventListener("keypress", async (event) => {
+        if (event.key === "Enter") {
+            const searchTerm = event.target.value.trim();
+            if (searchTerm) {
+                const params = new URLSearchParams({ query: searchTerm });
+                await fetch(`http://localhost:8001/api/search?${params}`, {
+                    method: 'GET',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('サーバーエラー');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    generateMemoList(data);
+                })
+              addToSearchHistory(searchTerm);
+              showSearchHistory(); // 履歴を更新して表示
+            }
         }
-      }
     });
 
     // 検索履歴のクリック処理
@@ -99,4 +111,4 @@ window.setupHeader = function() {
 
   console.log("✅ ヘッダーのセットアップ完了");
 };
-  
+
