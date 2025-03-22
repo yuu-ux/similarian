@@ -117,36 +117,30 @@ window.setupMemoEdit = function() {
         }
 
         const memoId = memoEditContainer.dataset.memoId;
-        
+        // console.log(memoId);
+
         try {
-            // 編集モードの場合、まず古いメモを削除
+            const formData = new URLSearchParams();
+            formData.append('id', memoId);
+            formData.append('memo', text);
+
+            let response;
             if (memoId) {
-                const deleteFormData = new URLSearchParams();
-                deleteFormData.append('id', memoId);
-                const deleteResponse = await fetch('http://localhost:8001/api/delete', {
+                response = await fetch('http://localhost:8001/api/update', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: deleteFormData,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                    body: formData
                 });
-                
-                if (!deleteResponse.ok) {
-                    throw new Error('古いメモの削除に失敗しました');
-                }
+            } else {
+                response = await fetch('http://localhost:8001/api/create', {
+                    method: 'POST',
+                    body: formData
+                });
             }
 
-            // 新しいメモを作成
-            const createFormData = new FormData();
-            createFormData.append("memo", text);
-            createFormData.append("group", ""); // 必要に応じてグループ情報も追加
-
-            const createResponse = await fetch('http://localhost:8001/api/create', {
-                method: "POST",
-                body: createFormData
-            });
-
-            const data = await createResponse.json();
+            const data = await response.json();
 
             if (data.status === "success") {
                 alert("メモを保存しました");
