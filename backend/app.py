@@ -48,16 +48,17 @@ def get_latest_id():
             'match_all': {},
         },
     }
-    response = client.search(index=INDEX_NAME, body=query)
-    id = response['hits']['hits'][0]['_source']['id'] if response['hits']['hits'] else 0
+    try:
+        response = client.search(index=INDEX_NAME, body=query)
+        id = response['hits']['hits'][0]['_source']['id'] if response['hits']['hits'] else 0
+    except:
+        id = 0
     return int(id)
 
 @app.route('/create', methods=['POST'])
 def create():
     text = request.form.get('memo', '')
     group = request.form.get('group', '')
-    import logging
-    logging.error(text)
     if not text:
         return jsonify({'status': 'error', 'message': 'メモの内容が空です'}), 400
 
@@ -115,24 +116,21 @@ def update():
 # データ検索（k-NN検索）
 @app.route('/search', methods=['GET'])
 def search_memos():
-    query_text = request.form.get('query')
-
+    query_text = request.args.get('query', '')
     # ベクトル化
     query_vector = model.encode(query_text).tolist()
-
     query = {
-        'size': 3,  # 取得する類似データ数
+        'size': 10,
         'query': {
             'knn': {
                 'vector': {
                     'vector': query_vector,
-                    'k': 3,  # 近傍数
-                    'num_candidates': 10  # 精度向上のための候補数
+                    'k': 10,
+                    # 'num_candidates': 10
                 }
             }
         }
     }
-
     response = client.search(index=INDEX_NAME, body=query)
     return jsonify(response['hits']['hits'])
 
