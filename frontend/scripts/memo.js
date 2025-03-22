@@ -12,39 +12,6 @@ async function getData() {
     }
 }
 
-// let memoData;
-// window.setupMemo = async function() {
-//     console.log("✅ メモエリアのセットアップ完了");
-
-//     const memoList = document.querySelector('.memo-list');
-//     memoList.innerHTML = ''; // 既存のメモをクリア
-
-//     memoData = await getData();
-//     memoData.forEach(memo => {
-//         const memoItem = document.createElement('div');
-//         memoItem.className = 'memo-item';
-//         memoItem.setAttribute('data-id', memo.id);
-//         memoItem.onclick = () => openMemo(memo.id);
-
-//         const previewText = memo.text || ''; // textがundefinedの場合は空文字を使用
-
-//         memoItem.innerHTML = `
-//             <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
-//             <div class="memo-item-textdata">${previewText ? marked.parse(previewText) : 'メモデータがありません'}</div>
-//             <div class="memo-item-group-button">
-//                 <p>グループ</p>
-//                 <div class="memo-item-button">
-//                     <button class="memo-item-button-edit">編集</button>
-//                     <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
-//                 </div>
-//             </div>
-//         `;
-
-//         memoList.appendChild(memoItem);
-//     });
-// };
-
-
 let memoData;
 window.setupMemo = async function() {
     console.log("✅ メモエリアのセットアップ完了");
