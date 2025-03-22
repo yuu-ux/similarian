@@ -57,11 +57,16 @@ window.setupMemo = async function() {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
         memoItem.setAttribute('data-id', memo.id);
-        memoItem.onclick = () => openMemo(memo.id);
+
+        // メモアイテムのクリックイベントを分離
+        const memoContent = document.createElement('div');
+        memoContent.className = 'memo-content-area';
+        memoContent.onclick = () => openMemo(memo.id);
 
         const previewText = memo.text;
 
-        memoItem.innerHTML = `
+        // メモの内容部分のHTML
+        memoContent.innerHTML = `
             <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
             <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
             <div class="memo-item-group-button">
@@ -73,6 +78,8 @@ window.setupMemo = async function() {
             </div>
         `;
 
+        // 要素を組み立てる
+        memoItem.appendChild(memoContent);
         memoList.appendChild(memoItem);
     });
 };
@@ -93,7 +100,7 @@ async function generateMemoList(memoData) {
         memoContent.className = 'memo-content-area';
         memoContent.onclick = () => openMemo(memo._source.id);
 
-        previewText = memo.text;
+        previewText = memo._source.text;
 
         // メモの内容部分のHTML
         memoContent.innerHTML = `
@@ -105,7 +112,7 @@ async function generateMemoList(memoData) {
         const groupEditArea = document.createElement('div');
         groupEditArea.className = 'memo-item-group-button';
         groupEditArea.innerHTML = `
-                <div class="memo-item-button">
+            <div class="memo-item-button">
                 <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo._source.id})">グループ編集</button>
                 <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo._source.id})">メモ削除</button>
             </div>
