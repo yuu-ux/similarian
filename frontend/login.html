@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Similarian</title>
-    <link rel="stylesheet" href="styles/login.css">
+    <link rel="stylesheet" href="/styles/login.css">
 </head>
 <body>
     <div class="container">
         <div class="form">
             <h1>Similarian</h1>
             <h1 class="login-title">ログイン</h1>
-            <form action="" method="post">
-                <div class="form-group">
-                    <label for="myname">名前</label>
-                    <input type="text" id="myname" name="myname" placeholder="  例： 山田太郎" required>
-                </div>
+            <form action="http://localhost:8001/api/login" method="post">
                 <div class="form-group">
                     <label for="email">メールアドレス</label>
                     <input type="email" id="email" name="email" placeholder="  例： test@example.com" required>
                 </div>
-                <button type="submit"><a href="index.html">送信</a></button>
-                <p>新規登録は<a href="signup.html">こちら</a></p>
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" placeholder=" 例: Yamada20030925" required>
+                </div>
+                <button type="submit">送信</button>
+                <p>新規登録は<a href="http://localhost:8001/signup">こちら</a></p>
             </form>
         </div>
     </div>

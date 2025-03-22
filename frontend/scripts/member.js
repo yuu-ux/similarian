@@ -46,9 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			.then((data) => {
 				if (data.status === 'success') {
 					alert('ユーザー登録に成功しました！');
+					//成功した場合に別のURLにリダイレクト
+					window.location.href = "http://localhost:8001"
 				}
 				else {
-					alear('エラー: ${data.message}');
+					alert('エラー: ${data.message}');
 				}
 			})
 			.catch((error) => {

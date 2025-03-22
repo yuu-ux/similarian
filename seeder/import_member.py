@@ -17,12 +17,57 @@ client = OpenSearch (
     verify_certs=False
 )
 
-# サンプルデータ（追加するメンバー）
+# 既存のインデックス削除
+if client.indices.exists(index=INDEX_NAME):
+    client.indices.delete(index=INDEX_NAME)
+
+# 新しいインデックス作成
+index_body = {
+    "settings": {
+        "index": {
+            "knn": False
+        }
+    },
+    "mappings": {
+        "properties": {
+            "id": {"type": "long"},
+            "name": {"type": "keyword"},
+            "email": {"type": "keyword"},
+            "password": {"type": "keyword"},
+            "created_at": {"type": "date"},
+            "updated_at": {"type": "date"},
+        }
+    }
+}
+
+client.indices.create(index=INDEX_NAME, body=index_body)
+print("✅ インデックス作成完了")
+
+# サンプルコード (追加するメンバー)
 members = [
-    {'id': '1', 'email': 'user1@example.com', 'password': 'password123'},
-    {'id': '2', 'email': 'user2@example.com', 'password': 'securepass'},
-    {'id': '3', 'email': 'user3@example.com', 'password': 'mypassword'},
+    {
+        'id': 1,
+        'name': 'アンガールズ田中',
+        'email': 'test@gmail.com',
+        'password': 'test20030425',
+    },
+    {
+        'id': 2,
+        'name': 'でんだいくん',
+        'email': 'test1@gmail.com',
+        'password': 'password1230',
+    }
 ]
+
+
+
+# # サンプルデータ（追加するメンバー）
+# members = [
+#     {'id': '1', 'email': 'user1@example.com', 'password': 'password123'},
+#     {'id': '2', 'email': 'user2@example.com', 'password': 'securepass'},
+#     {'id': '3', 'email': 'user3@example.com', 'password': 'mypassword'},
+# ]
+
 
 # パスワードをハッシュ化する関数
 def hash_password(password):
@@ -32,6 +77,7 @@ def hash_password(password):
 for member in members:
     doc = {
         'id': member['id'],
+        'name': member['name'],
         'email': member['email'],
         'password': hash_password(member['password']),
         'create_at': datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S'),

@@ -5,11 +5,14 @@ from dotenv import load_dotenv
 from datetime import timedelta, datetime
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from member import member_bp
+
 
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = 'user'
 app.permanent_session_lifetime = timedelta(minutes=5)
+app.register_blueprint(member_bp)
 
 # OpenSearch の接続設定
 admin_user = os.getenv('ADMIN_USER')
@@ -74,48 +77,7 @@ def create():
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
 
-@app.route('/register', methods=['POST'])
-def register():
-    name = request.form.get('myname')
-    email = request.form.get('email')
-    if not name or not email:
-        return jsonify({'status': 'error', 'message': '氏名とメールアドレスを入力してください'}), 400
-    data = {
-        'name': name,
-        'email': email,
-        'created_at': datetime.now().isoformat()
-    }
-
-    try:
-        client.index(index='users', body=data)        
-        return jsonify({'status': 'success', 'message': 'ユーザー登録に成功しました'}), 201
-    except Exception as e:
-        return jsonify({'status': 'success', 'message': '登録に失敗しました'}), 500
-
-@app.login('/login', methods=['POST'])
-def login():
-    email = request.form.get('email')
-    password = request.form.get('password')
-
-    if not email or not password:
-        return jsonify(['status': 'error', 'message': 'メールアドレスとパスワードを入力してください'])
-    
-    #OpenSearchでメールアドレスとパスワードを入力
-    query = {
-        'query': {
-            'match': {
-                'email': email
-                'password': password
-            }
-        }
-    }
-
-    try:
-        response = client.search(index='users', body=query)
-        hits = response['hits']['hits']
-        if not hits:
-            return jsonify({'status': 'error', 'message': 'ユーザーが見つかりませんでした'}), 404
-        return jsonify(['status': 'success', 'message': 'ログイン成功しました'])
+        
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -179,4 +141,4 @@ def search_memos():
     return jsonify(response['hits']['hits'])
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
