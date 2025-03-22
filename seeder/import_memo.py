@@ -132,6 +132,13 @@ memo_dict = [
         'text': '# メモ共有機能のアイディア\n\nメモの共有機能についてアイディアを出した。\n\n## 検討事項\n- ソーシャル要素を取り入れるべきか\n- プライバシー設定の粒度\n- 共同編集機能の実装\n\n### 共有オプション\n- リンク共有\n- 招待制\n- 公開/非公開設定\n\n> 共有しやすさとセキュリティのバランスが鍵',
         'group': 'アイディア',
     },
+    {
+        'id': 15,
+        'date': '2025-03-13',
+        'text': 'a',
+        'group': 'セキュリティ',
+        'similarity': 0.596
+    }
 ]
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
