@@ -11,6 +11,14 @@ window.setupHeader = function() {
     });
   }
 
+  const generateAiBtn = document.getElementById("generateAiBtn");
+  if (generateAiBtn) {
+    generateAiBtn.addEventListener("click", () => {
+      window.setupGenerativeAI();
+      console.log("generateAiBtn clicked");
+    });
+  }
+
   // 検索機能のセットアップ
   const searchInput = document.getElementById("searchInput");
   const searchHistory = document.getElementById("searchHistory");

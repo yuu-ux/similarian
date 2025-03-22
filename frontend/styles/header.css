@@ -38,7 +38,18 @@
 
 #newMemoBtn:hover {
   background-color: #b7cfebfd;
-  /* color: rgb(0, 0, 0); */
+}
+
+#generateAiBtn {
+  background-color: #f4f6f9fd;
+  color: #313131;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+#generateAiBtn:hover {
+  background-color: #b7cfebfd;
 }
 
 /* 検索ボックス */

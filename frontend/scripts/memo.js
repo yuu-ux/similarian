@@ -27,7 +27,6 @@ window.setupMemo = async function() {
         memoItem.className = 'memo-item';
         memoItem.setAttribute('data-id', memo.id);
 
-        // メモアイテムのクリックイベントを分離
         const memoContent = document.createElement('div');
         memoContent.className = 'memo-content-area';
         memoContent.onclick = () => openMemo(memo.id);
@@ -35,7 +34,6 @@ window.setupMemo = async function() {
         const firstParagraph = memo.text;
         previewText = firstParagraph;
 
-        // メモの内容部分のHTML
         const groupArea = document.createElement('div');
         groupArea.className = 'memo-item-group-area';
 
@@ -43,7 +41,6 @@ window.setupMemo = async function() {
         groupText.className = 'memo-item-group';
         groupText.textContent = memo.group || 'グループデータがありません';
 
-        // チェックボックスエリアの作成
         const checkboxArea = document.createElement('div');
         checkboxArea.className = 'memo-checkbox-area';
         const checkbox = document.createElement('input');
@@ -66,7 +63,6 @@ window.setupMemo = async function() {
         memoContent.appendChild(groupArea);
         memoContent.appendChild(textData);
 
-        // グループ編集部分のHTML
         const groupEditArea = document.createElement('div');
         groupEditArea.className = 'memo-item-group-button';
         groupEditArea.innerHTML = `
@@ -77,14 +73,12 @@ window.setupMemo = async function() {
             <div class="popover" id="popover-${memo.id}"></div>
         `;
 
-        // 要素を組み立てる
         memoItem.appendChild(memoContent);
         memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 };
 
-// メモの選択状態を切り替える関数
 function toggleMemoSelection(memoId) {
     const checkbox = document.querySelector(`.memo-item[data-id="${memoId}"] .memo-checkbox`);
     if (selectedMemos.has(memoId)) {
@@ -97,15 +91,11 @@ function toggleMemoSelection(memoId) {
     updateSelectionUI();
 }
 
-// 選択状態のUIを更新する関数
 function updateSelectionUI() {
     const selectedCount = selectedMemos.size;
-    // ここで選択されたメモの数に応じてUIを更新
-    // 例：ヘッダーに選択数を表示したり、一括操作ボタンの表示/非表示を切り替えたりする
     console.log(`${selectedCount}件のメモが選択されています`);
 }
 
-// メモリストを動的に生成する関数
 async function generateMemoList() {
     const memoList = document.querySelector('.memo-list');
     memoList.innerHTML = ''; // 既存のメモをクリア
@@ -116,7 +106,6 @@ async function generateMemoList() {
         memoItem.className = 'memo-item';
         memoItem.setAttribute('data-id', memo.id);
 
-        // チェックボックスエリアの作成
         const checkboxArea = document.createElement('div');
         checkboxArea.className = 'memo-checkbox-area';
         const checkbox = document.createElement('input');
@@ -129,7 +118,6 @@ async function generateMemoList() {
         };
         checkboxArea.appendChild(checkbox);
 
-        // メモアイテムのクリックイベントを分離
         const memoContent = document.createElement('div');
         memoContent.className = 'memo-content-area';
         memoContent.onclick = () => openMemo(memo.id);
@@ -137,7 +125,6 @@ async function generateMemoList() {
         const firstParagraph = memo.text;
         previewText = firstParagraph;
 
-        // メモの内容部分のHTML
         const groupArea = document.createElement('div');
         groupArea.className = 'memo-item-group-area';
 
@@ -153,7 +140,6 @@ async function generateMemoList() {
             <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
         `;
 
-        // グループ編集部分のHTML
         const groupEditArea = document.createElement('div');
         groupEditArea.className = 'memo-item-group-button';
         groupEditArea.innerHTML = `
@@ -164,14 +150,12 @@ async function generateMemoList() {
             <div class="popover" id="popover-${memo.id}"></div>
         `;
 
-        // 要素を組み立てる
         memoItem.appendChild(memoContent);
         memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 }
 
-// ページ読み込み時にメモリストを生成
 document.addEventListener('load', generateMemoList);
 
 function openMemo(id) {
@@ -213,7 +197,6 @@ function openMemo(id) {
             sideItem.onclick = () => openMemo(m.id);
             sideMemos.appendChild(sideItem);
         } else {
-            // 選択されているメモをサイドメモにも表示し、選択状態にする
             let sideItem = document.createElement('div');
             sideItem.className = 'side-memo-item selected';
             sideItem.setAttribute('data-id', m.id);
@@ -223,7 +206,6 @@ function openMemo(id) {
         }
     });
 
-    // 表示切り替え
     memoList.classList.add('hidden');
     memoEmb.classList.remove('hidden');
 } 
