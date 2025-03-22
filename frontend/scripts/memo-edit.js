@@ -3,7 +3,7 @@ window.toggleMemoEdit = function() {
     const memoList = document.querySelector('.memo-list');
     const memoEditContainer = document.querySelector('.memo-edit-container');
     const memoEmb = document.querySelector('.memo-emb');  // メモ詳細画面を取得
-    
+
     if (!memoEditContainer) {
         const main = document.getElementById('main');
         const editContainer = document.createElement('div');
@@ -27,7 +27,7 @@ window.toggleMemoEdit = function() {
             </div>
         `;
         main.appendChild(editContainer);
-        
+
         // DOMが追加されたことを確認してからセットアップを実行
         requestAnimationFrame(() => {
             setupMemoEdit();
@@ -38,7 +38,7 @@ window.toggleMemoEdit = function() {
     if (memoList) memoList.classList.add('hidden');
     if (memoEmb) memoEmb.classList.add('hidden');
     if (memoEditContainer) memoEditContainer.classList.add('hidden');
-    
+
     // 編集画面のみを表示
     if (memoEditContainer) memoEditContainer.classList.remove('hidden');
 };
@@ -46,7 +46,7 @@ window.toggleMemoEdit = function() {
 // メモ編集画面のセットアップ
 window.setupMemoEdit = function() {
     console.log('メモ編集画面のセットアップを開始');
-    
+
     // 必要なDOM要素を取得
     const memoEditContainer = document.querySelector('.memo-edit-container');
     const memoEditTextarea = document.getElementById('memoEditTextarea');
@@ -89,12 +89,12 @@ window.setupMemoEdit = function() {
         // メモ一覧を表示
         const memoList = document.querySelector('.memo-list');
         if (memoList) memoList.classList.remove('hidden');
-        
+
         // 編集画面とメモ詳細画面を非表示
         if (memoEditContainer) memoEditContainer.classList.add('hidden');
         const memoEmb = document.querySelector('.memo-emb');
         if (memoEmb) memoEmb.classList.add('hidden');
-        
+
         // テキストエリアをクリア
         memoEditTextarea.value = '';
     });
@@ -109,8 +109,8 @@ window.setupMemoEdit = function() {
 
         const formData = new FormData();
         formData.append("memo", text);
-        formData.append("group", ""); // 必要なら別途 UI でグループを入力       
-        fetch("http://localhost:8001/api/create", {
+        formData.append("group", ""); // 必要なら別途 UI でグループを入力
+        fetch("https://rra5ztrdk7.us-west-2.awsapprunner.com/api/create", {
             method: "POST",
             body: formData
         })
@@ -124,12 +124,12 @@ window.setupMemoEdit = function() {
                         // メモ一覧を表示
                         const memoList = document.querySelector('.memo-list');
                         if (memoList) memoList.classList.remove('hidden');
-                        
+
                         // 編集画面とメモ詳細画面を非表示
                         if (memoEditContainer) memoEditContainer.classList.add('hidden');
                         const memoEmb = document.querySelector('.memo-emb');
                         if (memoEmb) memoEmb.classList.add('hidden');
-                        
+
                         // テキストエリアをクリア
                         memoEditTextarea.value = '';
                     });
@@ -150,4 +150,4 @@ window.setupMemoEdit = function() {
 // ページ読み込み時に編集画面のセットアップを実行
 document.addEventListener('DOMContentLoaded', () => {
     // 代わりに toggleMemoEdit 関数で DOM を作成・設定します
-}); 
+});

@@ -1,5 +1,5 @@
 async function getData() {
-    const url = "http://localhost:8001/api/";
+    const url = 'https://rra5ztrdk7.us-west-2.awsapprunner.com/api/';
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -167,7 +167,7 @@ window.deleteMemo = function(id) {
     if (confirm('このメモを削除してもよろしいですか？')) {
         const formData = new URLSearchParams();
         formData.append('id', id);
-        fetch('http://localhost:8001/api/delete', {
+        fetch('https://rra5ztrdk7.us-west-2.awsapprunner.com/api/delete', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -349,7 +349,7 @@ async function updateGroup(memoId, newGroup) {
         formData.append('id', memoId);
         formData.append('group', newGroup);
 
-        const response = await fetch('http://localhost:8001/api/update', {
+        const response = await fetch('https://rra5ztrdk7.us-west-2.awsapprunner.com/api/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'

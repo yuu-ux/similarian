@@ -65,7 +65,7 @@ window.setupHeader = function() {
             const searchTerm = event.target.value.trim();
             if (searchTerm) {
                 const params = new URLSearchParams({ query: searchTerm });
-                await fetch(`http://localhost:8001/api/search?${params}`, {
+                await fetch(`https://rra5ztrdk7.us-west-2.awsapprunner.com/api/search?${params}`, {
                     method: 'GET',
                 })
                 .then(response => {
