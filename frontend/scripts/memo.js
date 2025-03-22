@@ -54,41 +54,35 @@ window.setupMemo = async function() {
 // メモリストを動的に生成する関数
 async function generateMemoList(memoData) {
     const memoList = document.querySelector('.memo-list');
-    memoList.innerHTML = ''; // 既存のメモをクリア
+    if (!memoList) {
+        console.error('メモリストが見つかりません');
+        return;
+    }
+    memoList.innerHTML = '';
 
+    if (!memoData || !Array.isArray(memoData)) {
+        console.error('メモデータが不正です');
+        return;
+    }
 
     memoData.forEach(memo => {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
-        memoItem.setAttribute('data-id', memo._source.id);
+        const memoSource = memo._source || memo;
+        memoItem.setAttribute('data-id', memoSource.id);
 
-        // メモアイテムのクリックイベントを分離
         const memoContent = document.createElement('div');
         memoContent.className = 'memo-content-area';
-        memoContent.onclick = () => openMemo(memo._source.id);
+        memoContent.onclick = () => openMemo(memoSource.id);
 
-        previewText = memo._source.text;
+        const previewText = memoSource.text || '';
 
-        // メモの内容部分のHTML
         memoContent.innerHTML = `
-            <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
-            <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
+            <div class="memo-item-group">${memoSource.group || 'グループデータがありません'}</div>
+            <div class="memo-item-textdata">${previewText ? marked.parse(previewText) : 'メモデータがありません'}</div>
         `;
 
-        // グループ編集部分のHTML
-        const groupEditArea = document.createElement('div');
-        groupEditArea.className = 'memo-item-group-button';
-        groupEditArea.innerHTML = `
-            <div class="memo-item-button">
-                <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo._source.id})">グループ編集</button>
-                <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo._source.id})">メモ削除</button>
-            </div>
-            <div class="popover" id="popover-${memo._source.id}"></div>
-        `;
-
-        // 要素を組み立てる
         memoItem.appendChild(memoContent);
-        memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 }

@@ -110,8 +110,8 @@ window.setupMemoEdit = function() {
 
     // 保存ボタンのクリックイベントを修正
     saveButton.addEventListener('click', async () => {
-        const text = memoEditTextarea.value.trim();
-        if (!text) {
+        const memo = memoEditTextarea.value.trim();
+        if (!memo) {
             alert('メモの内容を入力してください');
             return;
         }
@@ -122,7 +122,7 @@ window.setupMemoEdit = function() {
         try {
             const formData = new URLSearchParams();
             formData.append('id', memoId);
-            formData.append('memo', text);
+            formData.append('text', memo);
 
             let response;
             if (memoId) {
