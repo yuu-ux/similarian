@@ -5,11 +5,14 @@ from dotenv import load_dotenv
 from datetime import timedelta, datetime
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from member import member_bp
+
 
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = 'user'
 app.permanent_session_lifetime = timedelta(minutes=5)
+app.register_blueprint(member_bp)
 
 # OpenSearch の接続設定
 admin_user = os.getenv('ADMIN_USER')
@@ -77,6 +80,8 @@ def create():
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
 
+        
+
 @app.route('/delete', methods=['POST'])
 def delete():
     id = request.form.get('id')
@@ -113,6 +118,7 @@ def update():
     except:
         return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
 
+
 # データ検索（k-NN検索）
 @app.route('/search', methods=['GET'])
 def search_memos():
@@ -135,4 +141,4 @@ def search_memos():
     return jsonify(response['hits']['hits'])
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
