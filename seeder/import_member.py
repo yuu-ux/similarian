@@ -35,7 +35,6 @@ index_body = {
             "email": {"type": "keyword"},
             "password": {"type": "keyword"},
             "created_at": {"type": "date"},
-            "updated_at": {"type": "date"},
         }
     }
 }
@@ -58,16 +57,6 @@ members = [
         'password': 'password1230',
     }
 ]
-
-
-
-# # サンプルデータ（追加するメンバー）
-# members = [
-#     {'id': '1', 'email': 'user1@example.com', 'password': 'password123'},
-#     {'id': '2', 'email': 'user2@example.com', 'password': 'securepass'},
-#     {'id': '3', 'email': 'user3@example.com', 'password': 'mypassword'},
-# ]
-
 
 # パスワードをハッシュ化する関数
 def hash_password(password):
