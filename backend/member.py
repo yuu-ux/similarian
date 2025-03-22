@@ -67,14 +67,11 @@ def login():
 
     response = client.search(index=INDEX_NAME, body=query)
     hits = response['hits']['hits']
-    if not hits:
-        return jsonify({'status': 'error', 'message': 'ユーザーが見つかりませんでした'}), 404
-    return jsonify({'status': 'success', 'message': 'ログイン成功しました'}), 201
-    # try:
-    #     response = client.search(index=INDEX_NAME, body=query)
-    #     hits = response['hits']['hits']
-    #     if not hits:
-    #         return jsonify({'status': 'error', 'message': 'ユーザーが見つかりませんでした'}), 404
-    #     return jsonify({'status': 'success', 'message': 'ログイン成功しました'}), 201
-    # except:
-    #     return jsonify({'status': 'error', 'message': 'サーバーエラー'}), 500
+    try:
+        response = client.search(index=INDEX_NAME, body=query)
+        hits = response['hits']['hits']
+        if not hits:
+            return jsonify({'status': 'error', 'message': 'ユーザーが見つかりませんでした'}), 404
+        return jsonify({'status': 'success', 'message': 'ログイン成功しました'}), 201
+    except:
+        return jsonify({'status': 'error', 'message': 'サーバーエラー'}), 500

@@ -12,7 +12,6 @@
         <div class="form">
             <h1>Similarian</h1>
             <h1 class="login-title">ログイン</h1>
-            <form action="http://localhost:8001/api/login" method="post">
                 <div class="form-group">
                     <label for="email">メールアドレス</label>
                     <input type="email" id="email" name="email" placeholder="  例： test@example.com" required>
@@ -21,10 +20,12 @@
                     <label for="password">パスワード</label>
                     <input type="password" id="password" name="password" placeholder=" 例: Yamada20030925" required>
                 </div>
-                <button type="submit">送信</button>
+                <button id="login-button" type="button">送信</button>
                 <p>新規登録は<a href="http://localhost:8001/signup">こちら</a></p>
             </form>
         </div>
     </div>
+    <!-- JavaScriptを読み込む-->
+     <script src="../scripts/member.js"></script>
 </body>
 </html>
