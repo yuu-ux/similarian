@@ -21,7 +21,7 @@
     font-size: 15px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.10); 
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.10);
     border: 1px solid #ddd;
     overflow: hidden;
     gap: 10px;
@@ -275,6 +275,19 @@
 
 .memo-content th {
     background-color: #f3f3f3;
+}
+
+.acttion-bottuons {
+    display: flex;
+}
+.memo-detail-edit-button {
+  margin: 0 0 0 35px;
+  background-color: #4f83d1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .memo-detail-back-button {

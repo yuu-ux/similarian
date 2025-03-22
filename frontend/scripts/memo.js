@@ -26,8 +26,7 @@ window.setupMemo = async function() {
         memoItem.setAttribute('data-id', memo.id);
         memoItem.onclick = () => openMemo(memo.id);
 
-        const firstParagraph = memo.text;
-        previewText = firstParagraph;
+        const previewText = memo.text;
 
         memoItem.innerHTML = `
             <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
@@ -131,6 +130,7 @@ function openMemo(id) {
     // 表示切り替え
     memoList.classList.add('hidden');
     memoEmb.classList.remove('hidden');
+    memoEmb.dataset.id = memo.id;
 }
 
 function closeMemo() {
@@ -198,4 +198,19 @@ window.deleteMemo = function(id) {
 
 document.querySelectorAll(".memo-item-button-delete").forEach(button => {
     button.addEventListener("click", window.deleteMemo);
+});
+
+window.editMemo = function(event) {
+    toggleMemoEdit();
+    const button = event.currentTarget;
+    const parentWithDataId = button.closest('[data-id]');
+    const id = parentWithDataId?.getAttribute('data-id');
+    console.log(id);
+    const url = new URL(window.location.href);
+    url.searchParams.set('edit', id);
+    window.history.pushState({}, '', url);
+};
+
+document.querySelectorAll("memo-detail-edit-button").forEach(button => {
+    button.addEventListener("click", window.editMemo);
 });
