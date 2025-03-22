@@ -86,62 +86,94 @@ window.setupMemoEdit = function() {
 
     // キャンセルボタンのクリックイベント
     cancelButton.addEventListener('click', () => {
-        // メモ一覧を表示
-        const memoList = document.querySelector('.memo-list');
-        if (memoList) memoList.classList.remove('hidden');
+        const memoId = memoEditContainer.dataset.memoId;
         
-        // 編集画面とメモ詳細画面を非表示
-        if (memoEditContainer) memoEditContainer.classList.add('hidden');
-        const memoEmb = document.querySelector('.memo-emb');
-        if (memoEmb) memoEmb.classList.add('hidden');
+        if (memoId) {
+            // 編集中のメモがある場合は、そのメモの詳細画面に戻る
+            const memoEmb = document.querySelector('.memo-emb');
+            if (memoEmb) {
+                memoEmb.classList.remove('hidden');
+                memoEditContainer.classList.add('hidden');
+            }
+        } else {
+            // 新規作成の場合は、メモ一覧に戻る
+            const memoList = document.querySelector('.memo-list');
+            if (memoList) memoList.classList.remove('hidden');
+            memoEditContainer.classList.add('hidden');
+        }
         
         // テキストエリアをクリア
         memoEditTextarea.value = '';
+        // 編集中のメモIDをクリア
+        memoEditContainer.dataset.memoId = '';
     });
 
-    // 保存ボタンのクリックイベント
-    saveButton.addEventListener('click', () => {
+    // 保存ボタンのクリックイベントを修正
+    saveButton.addEventListener('click', async () => {
         const text = memoEditTextarea.value.trim();
         if (!text) {
             alert('メモの内容を入力してください');
             return;
         }
 
-        const formData = new FormData();
-        formData.append("memo", text);
-        formData.append("group", ""); // 必要なら別途 UI でグループを入力       
-        fetch("http://localhost:8001/api/create", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
+        const memoId = memoEditContainer.dataset.memoId;
+        
+        try {
+            // 編集モードの場合、まず古いメモを削除
+            if (memoId) {
+                const deleteFormData = new URLSearchParams();
+                deleteFormData.append('id', memoId);
+                const deleteResponse = await fetch('http://localhost:8001/api/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: deleteFormData,
+                });
+                
+                if (!deleteResponse.ok) {
+                    throw new Error('古いメモの削除に失敗しました');
+                }
+            }
+
+            // 新しいメモを作成
+            const createFormData = new FormData();
+            createFormData.append("memo", text);
+            createFormData.append("group", ""); // 必要に応じてグループ情報も追加
+
+            const createResponse = await fetch('http://localhost:8001/api/create', {
+                method: "POST",
+                body: createFormData
+            });
+
+            const data = await createResponse.json();
+
             if (data.status === "success") {
-                alert(data.message);
+                alert("メモを保存しました");
                 // 成功したらメモ一覧を更新
                 if (window.setupMemo) {
-                    window.setupMemo().then(() => {
-                        // メモ一覧を表示
-                        const memoList = document.querySelector('.memo-list');
-                        if (memoList) memoList.classList.remove('hidden');
-                        
-                        // 編集画面とメモ詳細画面を非表示
-                        if (memoEditContainer) memoEditContainer.classList.add('hidden');
-                        const memoEmb = document.querySelector('.memo-emb');
-                        if (memoEmb) memoEmb.classList.add('hidden');
-                        
-                        // テキストエリアをクリア
-                        memoEditTextarea.value = '';
-                    });
+                    await window.setupMemo();
+                    // メモ一覧を表示
+                    const memoList = document.querySelector('.memo-list');
+                    if (memoList) memoList.classList.remove('hidden');
+                    
+                    // 編集画面とメモ詳細画面を非表示
+                    if (memoEditContainer) memoEditContainer.classList.add('hidden');
+                    const memoEmb = document.querySelector('.memo-emb');
+                    if (memoEmb) memoEmb.classList.add('hidden');
+                    
+                    // テキストエリアをクリア
+                    memoEditTextarea.value = '';
+                    // 編集中のメモIDをクリア
+                    memoEditContainer.dataset.memoId = '';
                 }
             } else {
-                alert("メモの登録に失敗しました: " + data.message);
+                throw new Error(data.message || "メモの保存に失敗しました");
             }
-        })
-        .catch((error) => {
-            console.error("メモ登録エラー:", error);
-            alert("メモの登録中にエラーが発生しました");
-        });
+        } catch (error) {
+            console.error("エラー:", error);
+            alert(error.message || "メモの保存中にエラーが発生しました");
+        }
     });
 
     console.log('メモ編集画面のセットアップが完了');

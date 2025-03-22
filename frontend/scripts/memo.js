@@ -1,3 +1,4 @@
+// メモデータの取得
 async function getData() {
     const url = "http://localhost:8001/api/";
     try {
@@ -10,7 +11,6 @@ async function getData() {
         console.error(error.message);
     }
 }
-
 
 let memoData;
 window.setupMemo = async function() {
@@ -43,40 +43,6 @@ window.setupMemo = async function() {
         memoList.appendChild(memoItem);
     });
 };
-
-// メモリストを動的に生成する関数
-async function generateMemoList() {
-    const memoList = document.querySelector('.memo-list');
-    memoList.innerHTML = ''; // 既存のメモをクリア
-
-    memoData = await getData();
-    memoData.forEach(memo => {
-        const memoItem = document.createElement('div');
-        memoItem.className = 'memo-item';
-        memoItem.setAttribute('data-id', memo.id);
-        memoItem.onclick = () => openMemo(memo.id);
-
-        const firstParagraph = memo.text;
-        previewText = firstParagraph;
-
-        memoItem.innerHTML = `
-            <div class="memo-item-group">${memo.group || 'グループデータがありません'}</div>
-            <div class="memo-item-textdata">${marked.parse(previewText) || 'メモデータがありません'}</div>
-            <div class="memo-item-group-button">
-                <p>グループ</p>
-                <div class="memo-item-button">
-                    <button class="memo-item-button-edit">編集</button>
-                    <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">削除</button>
-                </div>
-            </div>
-        `;
-
-        memoList.appendChild(memoItem);
-    });
-}
-
-// ページ読み込み時にメモリストを生成
-document.addEventListener('load', generateMemoList);
 
 function openMemo(id) {
     const memoList = document.querySelector('.memo-list');
@@ -142,25 +108,6 @@ function closeMemo() {
     memoEmb.classList.add('hidden');
 }
 
-// 新しいメモを追加する関数
-window.addNewMemo = function(newMemo) {
-  console.log("✅ 新しいメモの追加開始");
-
-  // メモデータに新しいメモを追加
-  memoData.push(newMemo);
-
-  // ローカルストレージに保存
-  localStorage.setItem('memoData', JSON.stringify(memoData));
-
-  // メモ一覧を更新
-  generateMemoList();
-
-  // 新しいメモを選択状態にする
-  openMemo(newMemo.id);
-
-  console.log("✅ 新しいメモの追加完了");
-};
-
 // メモを削除する関数
 window.deleteMemo = function(id) {
     if (confirm('このメモを削除してもよろしいですか？')) {
@@ -196,21 +143,33 @@ window.deleteMemo = function(id) {
     }
 };
 
-document.querySelectorAll(".memo-item-button-delete").forEach(button => {
-    button.addEventListener("click", window.deleteMemo);
-});
+window.editMemo = function() {
+    const memoEmb = document.querySelector('.memo-emb');
+    const memoId = memoEmb.dataset.id; // 現在開いているメモのID
+    const memo = memoData.find(m => m.id === parseInt(memoId));
+    
+    if (!memo) {
+        console.error('メモが見つかりません');
+        return;
+    }
 
-window.editMemo = function(event) {
+    // 編集画面を表示
     toggleMemoEdit();
-    const button = event.currentTarget;
-    const parentWithDataId = button.closest('[data-id]');
-    const id = parentWithDataId?.getAttribute('data-id');
-    console.log(id);
-    const url = new URL(window.location.href);
-    url.searchParams.set('edit', id);
-    window.history.pushState({}, '', url);
-};
 
-document.querySelectorAll("memo-detail-edit-button").forEach(button => {
-    button.addEventListener("click", window.editMemo);
-});
+    // 編集画面のテキストエリアに現在のメモの内容をセット
+    const memoEditTextarea = document.getElementById('memoEditTextarea');
+    if (memoEditTextarea) {
+        memoEditTextarea.value = memo.text;
+        // プレビューも更新
+        const memoPreview = document.getElementById('memoPreview');
+        if (memoPreview) {
+            memoPreview.innerHTML = marked.parse(memo.text);
+        }
+    }
+
+    // 編集中のメモIDを保存
+    const memoEditContainer = document.querySelector('.memo-edit-container');
+    if (memoEditContainer) {
+        memoEditContainer.dataset.memoId = memoId;
+    }
+};

@@ -56,6 +56,8 @@ def get_latest_id():
 def create():
     text = request.form.get('memo', '')
     group = request.form.get('group', '')
+    import logging
+    logging.error(text)
     if not text:
         return jsonify({'status': 'error', 'message': 'メモの内容が空です'}), 400
 
