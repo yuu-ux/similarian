@@ -1,5 +1,5 @@
 async function getData() {
-    const url = 'https://rra5ztrdk7.us-west-2.awsapprunner.com/api/';
+    const url = 'https://rra5ztrdk7.us-west-2.awsapprunner.com/api';
     try {
         const response = await fetch(url);
         if (!response.ok) {
