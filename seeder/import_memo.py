@@ -117,6 +117,13 @@ memo_dict = [
         'group': 'アイディア',
         'similarity': 0.673
     },
+    {
+        'id': 15,
+        'date': '2025-03-13',
+        'text': 'a',
+        'group': 'セキュリティ',
+        'similarity': 0.596
+    }
 ]
 
 # メンバーをインポート
