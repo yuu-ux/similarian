@@ -46,10 +46,11 @@ window.setupMemo = async function() {
 };
 
 // メモリストを動的に生成する関数
-function generateMemoList() {
+async function generateMemoList() {
     const memoList = document.querySelector('.memo-list');
     memoList.innerHTML = ''; // 既存のメモをクリア
 
+    memoData = await getData();
     memoData.forEach(memo => {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
@@ -163,24 +164,38 @@ window.addNewMemo = function(newMemo) {
 // メモを削除する関数
 window.deleteMemo = function(id) {
     if (confirm('このメモを削除してもよろしいですか？')) {
-        console.log("✅ メモの削除開始");
-
-        // メモデータから該当のメモを削除
-        const index = memoData.findIndex(memo => memo.id === id);
-        if (index !== -1) {
-            memoData.splice(index, 1);
-
-            // ローカルストレージに保存
-            localStorage.setItem('memoData', JSON.stringify(memoData));
-
-            // メモ一覧を更新
-            generateMemoList();
-
-            // メモ詳細画面を閉じる
-            closeMemo();
-
-            console.log("✅ メモの削除完了");
-        }
+        const formData = new URLSearchParams();
+        formData.append('id', id);
+        fetch('http://localhost:8001/api/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('サーバーエラー');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                const memoElement = document.querySelector(`.memo-item[data-id="${id}"]`);
+                if (memoElement) {
+                    memoElement.remove();
+                }
+                alert("メモを削除しました");
+            } else {
+                alert("メモの削除に失敗しました");
+            }
+        })
+        .catch(error => {
+            alert("エラーが発生しました");
+        });
     }
 };
 
+document.querySelectorAll(".memo-item-button-delete").forEach(button => {
+    button.addEventListener("click", window.deleteMemo);
+});

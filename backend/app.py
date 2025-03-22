@@ -49,7 +49,7 @@ def get_latest_id():
         },
     }
     response = client.search(index=INDEX_NAME, body=query)
-    id = response['hits']['hits'][0]['_source']['id'] if response['hits']['hits'] else 1
+    id = response['hits']['hits'][0]['_source']['id'] if response['hits']['hits'] else 0
     return int(id)
 
 @app.route('/create', methods=['POST'])
@@ -60,7 +60,6 @@ def create():
         return jsonify({'status': 'error', 'message': 'メモの内容が空です'}), 400
 
     vector = model.encode(text).tolist()
-
     data = {
         'id': get_latest_id() + 1,
         'text': text,
@@ -70,7 +69,7 @@ def create():
         'modify_at': datetime.now().isoformat(),
     }
     try:
-        client.index(index=INDEX_NAME, body=data)
+        client.index(index=INDEX_NAME, id=data['id'], body=data)
         return jsonify({'status': 'success', 'message': 'メモを登録しました'}), 201
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
