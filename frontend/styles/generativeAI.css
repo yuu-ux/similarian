@@ -49,8 +49,9 @@
 
 .ai-display-content {
     padding: 1rem;
-    height: calc(100% - 60px); /* ヘッダーの高さを引く */
-    overflow-y: auto;
+    height: 100%;
+    overflow-y: auto; /* 縦のオーバーフローを自動で表示 */
+    overflow-x: hidden; /* 横のオーバーフローを隠す */
 }
 
 /* メモリストの幅を調整 */
