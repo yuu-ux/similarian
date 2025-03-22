@@ -608,3 +608,16 @@
     background-color: #cccccc;
     cursor: not-allowed;
 }
+
+.acttion-bottuons {
+    display: flex;
+}
+.memo-detail-edit-button {
+  margin: 0 0 0 35px;
+  background-color: #4f83d1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
