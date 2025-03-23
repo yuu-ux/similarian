@@ -1,15 +1,15 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from opensearchpy import OpenSearch
 import os
 from dotenv import load_dotenv
-from datetime import timedelta, datetime
-import numpy as np
+from datetime import datetime
 from sentence_transformers import SentenceTransformer
+import logging
+from flask_cors import CORS
 
 load_dotenv()
 app = Flask(__name__)
-app.secret_key = 'user'
-app.permanent_session_lifetime = timedelta(minutes=5)
+CORS(app, supports_credentials=True)
 
 # OpenSearch の接続設定
 admin_user = os.getenv('ADMIN_USER')
@@ -20,22 +20,28 @@ OPENSEARCH_PORT = os.getenv('OPENSEARCH_PORT')
 client = OpenSearch (
     hosts=[{'host': OPENSEARCH_HOST, 'port': int(OPENSEARCH_PORT)}],
     http_auth=(admin_user, admin_password),
-    use_ssl=False,
+    use_ssl=True,
     verify_certs=False
 )
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 INDEX_NAME = 'memo'
 
-@app.route('/', methods=['GET'])
+@app.route('/api', methods=['GET'])
 def index():
     query = {
         'query': {
             'match_all': {}
         },
         'size': 10000,
+        'sort': [
+            {'modify_at': {'order': 'desc'}}
+        ]
     }
-    response = client.search(index=INDEX_NAME, body=query)
+    try:
+        response = client.search(index=INDEX_NAME, body=query)
+    except Exception as e:
+        logging.error(e)
     documents = [hit['_source'] for hit in response['hits']['hits']]
     return jsonify(documents)
 
@@ -55,7 +61,7 @@ def get_latest_id():
         id = 0
     return int(id)
 
-@app.route('/create', methods=['POST'])
+@app.route('/api/create', methods=['POST'])
 def create():
     text = request.form.get('memo', '')
     group = request.form.get('group', '')
@@ -77,16 +83,17 @@ def create():
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
 
-@app.route('/delete', methods=['POST'])
+@app.route('/api/delete', methods=['POST'])
 def delete():
     id = request.form.get('id')
+
     try:
         client.delete(INDEX_NAME, id)
         return jsonify({'status': 'success', 'message': '削除しました'}), 201
     except:
         return jsonify({'status': 'error', 'message': '削除できませんでした'}), 400
 
-@app.route('/update', methods=['POST'])
+@app.route('/api/update', methods=['POST'])
 def update():
     id = request.form.get('id')
     text = request.form.get('text')
@@ -114,7 +121,7 @@ def update():
         return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
 
 # データ検索（k-NN検索）
-@app.route('/search', methods=['GET'])
+@app.route('/api/search', methods=['GET'])
 def search_memos():
     query_text = request.args.get('query', '')
     # ベクトル化
