@@ -4,3 +4,4 @@ opensearch-py
 python-dotenv
 numpy
 sentence-transformers
+flask_cors
