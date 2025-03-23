@@ -1,9 +1,8 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from opensearchpy import OpenSearch
 import os
 from dotenv import load_dotenv
-from datetime import timedelta, datetime
-import numpy as np
+from datetime import datetime
 from sentence_transformers import SentenceTransformer
 import boto3
 import json
@@ -11,8 +10,6 @@ from botocore.exceptions import ClientError
 
 load_dotenv()
 app = Flask(__name__)
-app.secret_key = 'user'
-app.permanent_session_lifetime = timedelta(minutes=5)
 app.register_blueprint(member_bp)
 
 # OpenSearch の接続設定
@@ -28,7 +25,7 @@ client = OpenSearch (
     verify_certs=False
 )
 
-model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+model = SentenceTransformer('stsb-xlm-r-multilingual')
 INDEX_NAME = 'memo'
 
 # Bedrockのクライアント設定を修正
@@ -70,7 +67,7 @@ def get_latest_id():
 
 @app.route('/create', methods=['POST'])
 def create():
-    text = request.form.get('memo', '')
+    text = request.form.get('text', '')
     group = request.form.get('group', '')
     if not text:
         return jsonify({'status': 'error', 'message': 'メモの内容が空です'}), 400
@@ -90,7 +87,7 @@ def create():
     except ValueError:
         return jsonify({'status': 'error', 'message': 'メモの登録に失敗しました'}), 400
 
-        
+
 
 @app.route('/delete', methods=['POST'])
 def delete():
