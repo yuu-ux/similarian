@@ -15,17 +15,12 @@ client = OpenSearch(
     verify_certs=False
 )
 
-# 既存のインデックス削除
-if client.indices.exists(index=INDEX_NAME):
-    client.indices.delete(index=INDEX_NAME)
+# インデックス削除（エラーハンドリングを簡略化）
+client.indices.delete(index=INDEX_NAME, ignore=[400, 404])
 
 # 新しいインデックス作成
 index_body = {
-    "settings": {
-        "index": {
-            "knn": True
-        }
-    },
+    "settings": {"index": {"knn": True}},
     "mappings": {
         "properties": {
             "id": {"type": "long"},
@@ -34,17 +29,12 @@ index_body = {
             "group": {"type": "keyword"},
             "create_at": {"type": "date"},
             "update_at": {"type": "date"},
-            "vector": {
-                "type": "knn_vector",
-                "dimension": 384
-            }
+            "vector": {"type": "knn_vector", "dimension": 384}
         }
     }
 }
-
-client.indices.create(index=INDEX_NAME, body=index_body)
+client.indices.create(index=INDEX_NAME, body=index_body, ignore=400)
 print("✅ インデックス作成完了")
-
 
 # サンプルデータ（追加するメンバー）
 memo_dict = [
@@ -132,31 +122,32 @@ memo_dict = [
         'text': '# メモ共有機能のアイディア\n\nメモの共有機能についてアイディアを出した。\n\n## 検討事項\n- ソーシャル要素を取り入れるべきか\n- プライバシー設定の粒度\n- 共同編集機能の実装\n\n### 共有オプション\n- リンク共有\n- 招待制\n- 公開/非公開設定\n\n> 共有しやすさとセキュリティのバランスが鍵',
         'group': 'アイディア',
     },
-    {
-        'id': 15,
-        'date': '2025-03-13',
-        'text': 'a',
-        'group': 'セキュリティ',
-        'similarity': 0.596
-    }
 ]
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
-# --- ドキュメント登録 ---
-for memo in memo_dict:
-    vector = model.encode(memo['text']).tolist()
+# 事前に現在時刻を計算（ループで繰り返し計算しない）
+now_iso = datetime.datetime.now(datetime.UTC).isoformat()
 
+# テキストを一括エンコード
+texts = [memo["text"] for memo in memo_dict]
+vectors = model.encode(texts, batch_size=8, show_progress_bar=False).tolist()
+
+# バルクインデクシング用データ作成
+bulk_data = []
+for memo, vector in zip(memo_dict, vectors):
     doc = {
-        'id': memo['id'],
-        'date': memo['date'],
-        'text': memo['text'],
-        'group': memo['group'],
-        'vector': vector,
-        'create_at': datetime.datetime.now(datetime.UTC).isoformat(),
-        'update_at': datetime.datetime.now(datetime.UTC).isoformat()
+        "id": memo["id"],
+        "date": memo["date"],
+        "text": memo["text"],
+        "group": memo["group"],
+        "vector": vector,
+        "create_at": now_iso,
+        "update_at": now_iso
     }
+    bulk_data.append({"index": {"_index": INDEX_NAME, "_id": memo["id"]}})
+    bulk_data.append(doc)
 
-    response = client.index(index=INDEX_NAME, id=memo['id'], body=doc)
-
-print("✅ ドキュメント登録完了（ベクトル含む）")# ドキュメント登録
+# 一括インデクシング
+client.bulk(body=bulk_data)
+print("✅ ドキュメント登録完了（バッチ処理適用）")

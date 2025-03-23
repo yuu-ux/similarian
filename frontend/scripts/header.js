@@ -111,4 +111,3 @@ window.setupHeader = function() {
 
   console.log("✅ ヘッダーのセットアップ完了");
 };
-
