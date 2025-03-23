@@ -3,7 +3,7 @@ window.toggleMemoEdit = function() {
     const memoList = document.querySelector('.memo-list');
     const memoEditContainer = document.querySelector('.memo-edit-container');
     const memoEmb = document.querySelector('.memo-emb');  // メモ詳細画面を取得
-    
+
     if (!memoEditContainer) {
         const main = document.getElementById('main');
         const editContainer = document.createElement('div');
@@ -27,7 +27,7 @@ window.toggleMemoEdit = function() {
             </div>
         `;
         main.appendChild(editContainer);
-        
+
         // DOMが追加されたことを確認してからセットアップを実行
         requestAnimationFrame(() => {
             setupMemoEdit();
@@ -38,7 +38,7 @@ window.toggleMemoEdit = function() {
     if (memoList) memoList.classList.add('hidden');
     if (memoEmb) memoEmb.classList.add('hidden');
     if (memoEditContainer) memoEditContainer.classList.add('hidden');
-    
+
     // 編集画面のみを表示
     if (memoEditContainer) memoEditContainer.classList.remove('hidden');
 };
@@ -46,7 +46,7 @@ window.toggleMemoEdit = function() {
 // メモ編集画面のセットアップ
 window.setupMemoEdit = function() {
     console.log('メモ編集画面のセットアップを開始');
-    
+
     // 必要なDOM要素を取得
     const memoEditContainer = document.querySelector('.memo-edit-container');
     const memoEditTextarea = document.getElementById('memoEditTextarea');
@@ -87,7 +87,7 @@ window.setupMemoEdit = function() {
     // キャンセルボタンのクリックイベント
     cancelButton.addEventListener('click', () => {
         const memoId = memoEditContainer.dataset.memoId;
-        
+
         if (memoId) {
             // 編集中のメモがある場合は、そのメモの詳細画面に戻る
             const memoEmb = document.querySelector('.memo-emb');
@@ -101,7 +101,7 @@ window.setupMemoEdit = function() {
             if (memoList) memoList.classList.remove('hidden');
             memoEditContainer.classList.add('hidden');
         }
-        
+
         // テキストエリアをクリア
         memoEditTextarea.value = '';
         // 編集中のメモIDをクリア
@@ -110,19 +110,18 @@ window.setupMemoEdit = function() {
 
     // 保存ボタンのクリックイベントを修正
     saveButton.addEventListener('click', async () => {
-        const memo = memoEditTextarea.value.trim();
-        if (!memo) {
+        const text = memoEditTextarea.value.trim();
+        if (!text) {
             alert('メモの内容を入力してください');
             return;
         }
 
         const memoId = memoEditContainer.dataset.memoId;
-        // console.log(memoId);
 
         try {
             const formData = new URLSearchParams();
             formData.append('id', memoId);
-            formData.append('text', memo);
+            formData.append('text', text);
 
             let response;
             if (memoId) {
@@ -150,12 +149,12 @@ window.setupMemoEdit = function() {
                     // メモ一覧を表示
                     const memoList = document.querySelector('.memo-list');
                     if (memoList) memoList.classList.remove('hidden');
-                    
+
                     // 編集画面とメモ詳細画面を非表示
                     if (memoEditContainer) memoEditContainer.classList.add('hidden');
                     const memoEmb = document.querySelector('.memo-emb');
                     if (memoEmb) memoEmb.classList.add('hidden');
-                    
+
                     // テキストエリアをクリア
                     memoEditTextarea.value = '';
                     // 編集中のメモIDをクリア
@@ -176,4 +175,4 @@ window.setupMemoEdit = function() {
 // ページ読み込み時に編集画面のセットアップを実行
 document.addEventListener('DOMContentLoaded', () => {
     // 代わりに toggleMemoEdit 関数で DOM を作成・設定します
-}); 
+});
