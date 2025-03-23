@@ -7,6 +7,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import boto3
 import json
+from botocore.exceptions import ClientError
 
 load_dotenv()
 app = Flask(__name__)
@@ -29,8 +30,14 @@ client = OpenSearch (
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 INDEX_NAME = 'memo'
 
-# Bedrockのクライアントを作成
-bedrock_client = boto3.client('bedrock', region_name='us-east-1')  # 適切なリージョンを指定
+# Bedrockのクライアント設定を修正
+bedrock_runtime = boto3.client(
+    service_name='bedrock-runtime',
+    region_name='us-west-2',
+    aws_session_token=os.getenv('AWS_SESSION_TOKEN'),
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -141,39 +148,72 @@ def search_memos():
 
 @app.route('/sendTexts', methods=['POST'])
 def send_texts():
-    data = request.json
-    texts = data.get('texts', [])
-    
-    # 受け取ったテキストをログに表示
-    print("受け取ったテキスト:", texts)
-
-    # Bedrock に送信するためのリクエストボディを作成
-    messages = [{"role": "user", "content": [{"type": "text", "text": text}]} for text in texts]
-    
-    request_body = {
-        "modelId": "anthropic.claude-3-7-sonnet-20250219-v1:0",
-        "contentType": "application/json",
-        "accept": "application/json",
-        "body": {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": 200,
-            "top_k": 250,
-            "stop_sequences": [],
-            "temperature": 1,
-            "top_p": 0.999,
-            "messages": messages
-        }
-    }
-
-    # Bedrock にリクエストを送信
     try:
-        response = bedrock_client.invoke_model(**request_body)
-        generated_text = response['body']['generated_text']  # 生成されたテキストを取得
+        data = request.json
+        texts = data.get('texts', [])
+        
+        print("受け取ったテキスト:", texts)  # デバッグログ
 
-        return jsonify({'status': 'success', 'message': 'テキストを受け取りました', 'generated_text': generated_text})
+        # テキストを結合して1つのプロンプトにする
+        combined_text = " ".join(texts)
+
+        # Claudeへのリクエストボディを作成
+        request_body = {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 1000,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": combined_text
+                }
+            ],
+            "temperature": 0.7,
+            "top_p": 1,
+            "top_k": 250
+        }
+
+        try:
+            print("Bedrockにリクエスト送信:", json.dumps(request_body, indent=2))  # デバッグログ
+            
+            print(os.getenv('AWS_SECRET_ACCESS_KEY'))
+            print(os.getenv('AWS_ACCESS_KEY_ID'))
+            print(os.getenv('AWS_SESSION_TOKEN'))
+            # Bedrock APIを呼び出し
+            response = bedrock_runtime.invoke_model(
+                modelId="anthropic.claude-3-sonnet-20240229-v1:0",
+                body=json.dumps(request_body),
+                contentType="application/json",
+                accept="application/json"
+            )
+
+            # レスポンスの処理
+            response_body = json.loads(response['body'].read().decode())
+            print("Bedrockからのレスポンス:", json.dumps(response_body, indent=2))  # デバッグログ
+
+            # レスポンスから生成されたテキストを取得
+            generated_text = response_body['content'][0]['text']
+
+            return jsonify({
+                'status': 'success',
+                'message': 'テキストを生成しました',
+                'generated_text': generated_text
+            })
+
+        except ClientError as e:
+            error_code = e.response['Error']['Code']
+            error_message = e.response['Error']['Message']
+            print(f"Bedrock APIエラー: {error_code} - {error_message}")  # デバッグログ
+            return jsonify({
+                'status': 'error',
+                'message': f'Bedrock APIエラー: {error_message}'
+            }), 500
+
     except Exception as e:
-        print("エラー:", e)
-        return jsonify({'status': 'error', 'message': 'テキストの生成に失敗しました'}), 500
+        print(f"予期せぬエラー: {str(e)}")  # デバッグログ
+        return jsonify({
+            'status': 'error',
+            'message': f'テキストの生成に失敗しました: {str(e)}'
+        }), 500
 
 if __name__ == '__main__':
     app.run()

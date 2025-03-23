@@ -67,7 +67,7 @@ window.setupMemo = async function() {
         const groupEditArea = document.createElement('div');
         groupEditArea.className = 'memo-item-group-button';
         groupEditArea.innerHTML = `
-            <div class="memo-item-button">
+                <div class="memo-item-button">
                 <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo.id})">グループ編集</button>
                 <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">メモ削除</button>
             </div>
@@ -155,7 +155,7 @@ async function generateMemoList() {
         const groupEditArea = document.createElement('div');
         groupEditArea.className = 'memo-item-group-button';
         groupEditArea.innerHTML = `
-            <div class="memo-item-button">
+                <div class="memo-item-button">
                 <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo.id})">グループ編集</button>
                 <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">メモ削除</button>
             </div>
@@ -220,7 +220,7 @@ function openMemo(id) {
 
     memoList.classList.add('hidden');
     memoEmb.classList.remove('hidden');
-} 
+}
 
 function closeMemo() {
     const memoList = document.querySelector('.memo-list');
