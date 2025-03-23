@@ -79,7 +79,7 @@ async function generateMemoList(memoData) {
         memoContent.className = 'memo-content-area';
         memoContent.onclick = () => openMemo(memo._source.id);
 
-        previewText = memo._source.text;
+        previewText = memo.text;
 
         // メモの内容部分のHTML
         memoContent.innerHTML = `
@@ -92,10 +92,10 @@ async function generateMemoList(memoData) {
         groupEditArea.className = 'memo-item-group-button';
         groupEditArea.innerHTML = `
             <div class="memo-item-button">
-                <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo._source.id})">グループ編集</button>
-                <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo._source.id})">メモ削除</button>
+                <button class="edit-group" onclick="event.stopPropagation(); showGroupEditPopover(this, ${memo.id})">グループ編集</button>
+                <button class="memo-item-button-delete" onclick="event.stopPropagation(); deleteMemo(${memo.id})">メモ削除</button>
             </div>
-            <div class="popover" id="popover-${memo._source.id}"></div>
+            <div class="popover" id="popover-${memo.id}"></div>
         `;
 
         // 要素を組み立てる
@@ -323,6 +323,8 @@ window.addSelectedGroups = async function(memoId) {
     const memo = memoData.find(m => m.id === memoId);
     if (!memo) return;
 
+    const memoText = memo.text;
+    console.log(memoText);
     const currentGroups = memo.group ? memo.group.split(',').map(g => g.trim()) : [];
     const selectedGroups = Array.from(
         document.querySelectorAll('.group-section:last-child .group-select-button.selected')
@@ -330,7 +332,7 @@ window.addSelectedGroups = async function(memoId) {
 
     // 新しいグループを追加
     const updatedGroups = [...new Set([...currentGroups, ...selectedGroups])];
-    await updateGroup(memoId, updatedGroups.join(', '));
+    await updateGroup(memoId, updatedGroups.join(', '), memoText, false);
 }
 
 // 選択したグループを削除
@@ -341,7 +343,8 @@ window.removeFromSelectedGroups = async function(memoId) {
             console.log('メモID ${memoID}が見つかりません');
             return;
         }
-
+        
+        const memoText = memo.text;
         const currentGroups = memo.group ? memo.group.split(',').map(g => g.trim()) : [];
         const selectedGroups = Array.from(
             document.querySelectorAll('.group-section:first-child .group-select-button.selected')
@@ -349,19 +352,23 @@ window.removeFromSelectedGroups = async function(memoId) {
 
         // 選択されたグループを除外
         const updatedGroups = currentGroups.filter(group => !selectedGroups.includes(group));
-        await updateGroup(memoId, updatedGroups.join(', '));
+        await updateGroup(memoId, updatedGroups.join(', '), memoText, true);
     } catch (error) {
     console.error("グループ削除中にエラーが発生しました", error);
     }
 }
 
 // グループを更新する関数
-async function updateGroup(memoId, newGroup) {
+async function updateGroup(memoId, newGroup, text, flag) {
     try {
         const formData = new URLSearchParams();
         formData.append('id', memoId);
         formData.append('group', newGroup);
-
+        formData.append('text', text);
+        if (flag)
+            formData.append('flag', true);
+        else
+            formData.append('flag', false);
         const response = await fetch('http://localhost:8001/api/update', {
             method: 'POST',
             headers: {
@@ -375,17 +382,20 @@ async function updateGroup(memoId, newGroup) {
         }
         // メモデータを更新
         memoData = await getData();
-        
+       
         // UI更新
         generateMemoList(memoData);
         
-    //     // ポップオーバーを閉じる
-    //     const popover = document.getElementById(`popover-${memoId}`);
-    //     if (popover){
-    //         popover.classList.remove("show");
-    //     } else {
-    //         console.warn('Popover for memoID ${memoID}が見つかりません');
-    //     }
+        location.reload();
+
+        // ポップオーバーを閉じる
+        const popover = document.getElementById(`popover-${memoId}`);
+        if (popover){
+            popover.classList.remove("show");
+            console.log("グループを更新しました");
+        } else {
+            console.warn('Popover for memoID ${memoID}が見つかりません');
+        }
     } catch (error) {
         console.error('エラーが発生しました:', error);
         alert('グループの更新に失敗しました');

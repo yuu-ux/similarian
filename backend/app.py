@@ -96,28 +96,25 @@ def update():
     id = request.form.get('id')
     text = request.form.get('text')
     group = request.form.get('group')
+    flag = request.form.get('flag')
 
     if id is None:
         return jsonify({'status': 'error', 'message': '不正なリクエストです'})
     vector = None
     if text:
         vector = model.encode(text).tolist()
-
-    data = {
-        'doc' : {
-            'text': text if text else None,
-            'group': group if group else None,
-            'vector': vector if vector else None,
-            'modify_at': datetime.now().isoformat(),
-        },
-    }
-
+    if flag == 'true':
+        data =  removeGroup(text, group, vector)
+    else:
+        data =  addGroup(text, group, vector)
     try:
+        print("test")
         client.update(INDEX_NAME, id, body=data)
+        from pprint import pprint
+        pprint(data)
         return jsonify({'status': 'success', 'message': '更新しました'}), 201
     except:
         return jsonify({'status': 'error', 'message': '更新できませんでした'}), 500
-
 
 # データ検索（k-NN検索）
 @app.route('/search', methods=['GET'])
@@ -139,6 +136,50 @@ def search_memos():
     }
     response = client.search(index=INDEX_NAME, body=query)
     return jsonify(response['hits']['hits'])
+
+def removeGroup(text, group, vector):
+    data = {
+    'doc': {}
+    }
+
+    if text:
+        data['doc']['text'] = text
+
+    if group:
+        data['doc']['group'] = group
+
+    elif not group:
+        data['doc']['group'] = ""
+    
+    if vector:
+        data['doc']['vector'] = vector
+
+    data['doc']['modify_at'] = datetime.now().isoformat()
+    return data
+
+def addGroup(text, group, vector):
+    data = {
+    'doc': {}
+    }
+
+    print(text)
+    if text:
+        data['doc']['text'] = text
+
+    if group:
+        # 既存の group に新しい group を追加
+        if 'group' in data['doc'] and data['doc']['group']:
+            # 既存のグループがある場合、カンマ区切りで追加
+            data['doc']['group'] = f"{data['doc']['group']}, {group}"
+        else:
+            # 既存のグループがない場合、新しいグループをそのまま設定
+            data['doc']['group'] = group
+    
+    if vector:
+        data['doc']['vector'] = vector
+
+    data['doc']['modify_at'] = datetime.now().isoformat()
+    return data
 
 if __name__ == '__main__':
     app.run()
