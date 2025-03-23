@@ -6063,7 +6063,7 @@ for memo in memo_dict:
         'group': memo['group'],
         'vector': vector,
         'create_at': datetime.datetime.now(datetime.UTC).isoformat(),
-        'update_at': datetime.datetime.now(datetime.UTC).isoformat()
+        'modify_at': datetime.datetime.now(datetime.UTC).isoformat()
     }
 
     response = client.index(index=INDEX_NAME, id=memo['id'], body=doc)
