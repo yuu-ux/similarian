@@ -8,6 +8,7 @@ from sentence_transformers import SentenceTransformer
 import boto3
 import json
 from botocore.exceptions import ClientError
+from member import member_bp
 
 load_dotenv()
 app = Flask(__name__)
