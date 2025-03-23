@@ -6,10 +6,12 @@ from datetime import datetime
 from sentence_transformers import SentenceTransformer
 import logging
 from flask_cors import CORS
+from member import member_bp
 
 load_dotenv()
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+app.register_blueprint(member_bp)
 
 # OpenSearch の接続設定
 admin_user = os.getenv('ADMIN_USER')
@@ -24,7 +26,7 @@ client = OpenSearch (
     verify_certs=False
 )
 
-model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+model = SentenceTransformer('stsb-xlm-r-multilingual')
 INDEX_NAME = 'memo'
 
 @app.route('/api', methods=['GET'])
@@ -63,7 +65,7 @@ def get_latest_id():
 
 @app.route('/api/create', methods=['POST'])
 def create():
-    text = request.form.get('memo', '')
+    text = request.form.get('text', '')
     group = request.form.get('group', '')
     if not text:
         return jsonify({'status': 'error', 'message': 'メモの内容が空です'}), 400
@@ -119,6 +121,7 @@ def update():
         return jsonify({'status': 'success', 'message': '更新しました'}), 201
     except:
         return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
+
 
 # データ検索（k-NN検索）
 @app.route('/api/search', methods=['GET'])
