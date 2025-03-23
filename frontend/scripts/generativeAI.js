@@ -43,16 +43,22 @@ window.setupGenerativeAI = function() {
   function sendSelectedTextToBackend() {
     const selectedTexts = Array.from(selectedMemos).map(id => {
         const selectedMemo = memoData.find(m => m.id === id);
-        return selectedMemo ? selectedMemo.text : null; // メモのテキストを取得
-    }).filter(text => text !== null); // nullを除外
-  
+        return selectedMemo ? selectedMemo.text : null;
+    }).filter(text => text !== null);
+
     if (selectedTexts.length > 0) {
-        // バックエンドに送信するためのデータを準備
+        const aiDisplayContent = document.querySelector('.ai-display-content');
+        // ローディング表示用のdiv
+        aiDisplayContent.innerHTML = `
+            <div class="ai-loading">
+                <p>生成中...</p>
+            </div>
+        `;
+
         const payload = {
             texts: selectedTexts
         };
-  
-        // バックエンドにPOSTリクエストを送信
+
         fetch("http://localhost:8001/api/sendTexts", {
             method: "POST",
             headers: {
@@ -63,13 +69,58 @@ window.setupGenerativeAI = function() {
         .then(response => response.json())
         .then(data => {
             console.log("バックエンドからの応答:", data);
-            // 必要に応じて、成功メッセージやエラーメッセージを表示
+            
+            const aiDisplayContent = document.querySelector('.ai-display-content');
+            
+            if (data.status === 'success') {
+                // 生成された文章用のdivを作成
+                aiDisplayContent.innerHTML = `
+                    <div class="ai-generated-content">
+                        <div class="ai-generated-header">
+                            <h3>生成された文章</h3>
+                            <span class="ai-generated-time">${new Date().toLocaleString()}</span>
+                        </div>
+                        <div class="ai-generated-text">
+                            ${marked.parse(data.generated_text)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // エラーメッセージ用のdiv
+                aiDisplayContent.innerHTML = `
+                    <div class="ai-error-content">
+                        <div class="error-message">
+                            <h3>エラーが発生しました</h3>
+                            <p>${data.message}</p>
+                        </div>
+                    </div>
+                `;
+            }
         })
         .catch(error => {
             console.error("エラー:", error);
+            const aiDisplayContent = document.querySelector('.ai-display-content');
+            // エラーメッセージ用のdiv
+            aiDisplayContent.innerHTML = `
+                <div class="ai-error-content">
+                    <div class="error-message">
+                        <h3>エラーが発生しました</h3>
+                        <p>サーバーとの通信に失敗しました</p>
+                    </div>
+                </div>
+            `;
         });
     } else {
-        console.log("選択されたメモがありません。");
+        const aiDisplayContent = document.querySelector('.ai-display-content');
+        // 警告メッセージ用のdiv
+        aiDisplayContent.innerHTML = `
+            <div class="ai-warning-content">
+                <div class="warning-message">
+                    <h3>メモが選択されていません</h3>
+                    <p>生成AIを使用するには、メモを選択してください</p>
+                </div>
+            </div>
+        `;
     }
   }
   

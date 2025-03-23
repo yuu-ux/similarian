@@ -155,7 +155,7 @@ def send_texts():
         print("受け取ったテキスト:", texts)  # デバッグログ
 
         # テキストを結合して1つのプロンプトにする
-        combined_text = " ".join(texts)
+        combined_text = "以下の複数のテキストの内容を基に、ユーザに新しいアイディアを提供してください。：\n\n" + "\n\n".join(texts)
 
         # Claudeへのリクエストボディを作成
         request_body = {
@@ -173,7 +173,7 @@ def send_texts():
         }
 
         try:
-            print("Bedrockにリクエスト送信:", json.dumps(request_body, indent=2))  # デバッグログ
+            print("Bedrockにリクエスト送信:", json.dumps(request_body, indent=2))
             
             print(os.getenv('AWS_SECRET_ACCESS_KEY'))
             print(os.getenv('AWS_ACCESS_KEY_ID'))
