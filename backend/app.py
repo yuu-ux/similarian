@@ -116,7 +116,7 @@ def update():
         client.update(INDEX_NAME, id, body=data)
         return jsonify({'status': 'success', 'message': '更新しました'}), 201
     except:
-        return jsonify({'status': 'success', 'message': '更新できませんでした'}), 404
+        return jsonify({'status': 'error', 'message': '更新できませんでした'}), 500
 
 
 # データ検索（k-NN検索）

@@ -1,5 +1,5 @@
 async function getData() {
-    const url = "http://localhost:8001/api/";
+    const url = "http://localhost:8001/api";
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -8,6 +8,7 @@ async function getData() {
         return await response.json();
     } catch (error) {
         console.error(error.message);
+        return [];
     }
 }
 
@@ -62,11 +63,16 @@ async function generateMemoList(memoData) {
     const memoList = document.querySelector('.memo-list');
     memoList.innerHTML = ''; // 既存のメモをクリア
 
+    if (!Array.isArray(memoData) || memoData.length === 0){
+        console.warn("メモデータが存在しません");
+        return ;
+    }
 
+    console.log(memoData)
     memoData.forEach(memo => {
         const memoItem = document.createElement('div');
         memoItem.className = 'memo-item';
-        memoItem.setAttribute('data-id', memo._source.id);
+        memoItem.setAttribute('data-id', memo.id);
 
         // メモアイテムのクリックイベントを分離
         const memoContent = document.createElement('div');
@@ -329,17 +335,24 @@ window.addSelectedGroups = async function(memoId) {
 
 // 選択したグループを削除
 window.removeFromSelectedGroups = async function(memoId) {
-    const memo = memoData.find(m => m.id === memoId);
-    if (!memo) return;
+    try{
+        const memo = memoData.find(m => m.id === memoId);
+        if (!memo) {
+            console.log('メモID ${memoID}が見つかりません');
+            return;
+        }
 
-    const currentGroups = memo.group ? memo.group.split(',').map(g => g.trim()) : [];
-    const selectedGroups = Array.from(
-        document.querySelectorAll('.group-section:first-child .group-select-button.selected')
-    ).map(button => button.dataset.group);
+        const currentGroups = memo.group ? memo.group.split(',').map(g => g.trim()) : [];
+        const selectedGroups = Array.from(
+            document.querySelectorAll('.group-section:first-child .group-select-button.selected')
+        ).map(button => button.dataset.group);
 
-    // 選択されたグループを除外
-    const updatedGroups = currentGroups.filter(group => !selectedGroups.includes(group));
-    await updateGroup(memoId, updatedGroups.join(', '));
+        // 選択されたグループを除外
+        const updatedGroups = currentGroups.filter(group => !selectedGroups.includes(group));
+        await updateGroup(memoId, updatedGroups.join(', '));
+    } catch (error) {
+    console.error("グループ削除中にエラーが発生しました", error);
+    }
 }
 
 // グループを更新する関数
@@ -356,19 +369,23 @@ async function updateGroup(memoId, newGroup) {
             },
             body: formData
         });
-
+        
         if (!response.ok) {
             throw new Error('グループの更新に失敗しました');
         }
-
         // メモデータを更新
         memoData = await getData();
-
+        
         // UI更新
-        generateMemoList();
-
-        // ポップオーバーを閉じる
-        document.getElementById(`popover-${memoId}`).classList.remove('show');
+        generateMemoList(memoData);
+        
+    //     // ポップオーバーを閉じる
+    //     const popover = document.getElementById(`popover-${memoId}`);
+    //     if (popover){
+    //         popover.classList.remove("show");
+    //     } else {
+    //         console.warn('Popover for memoID ${memoID}が見つかりません');
+    //     }
     } catch (error) {
         console.error('エラーが発生しました:', error);
         alert('グループの更新に失敗しました');
