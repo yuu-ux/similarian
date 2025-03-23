@@ -2,16 +2,16 @@ from opensearchpy import OpenSearch
 import datetime
 from sentence_transformers import SentenceTransformer
 
-OPENSEARCH_HOST = 'opensearch'
-OPENSEARCH_PORT = 9200
+OPENSEARCH_HOST = 'search-similarian-t7y2rxhf6tkgbmnki4ihdro6ni.us-west-2.es.amazonaws.com'
+OPENSEARCH_PORT = 443
 INDEX_NAME = 'memo'
-ADMIN_USER = 'admin'
-ADMIN_PASSWORD = '514_YugaEhara'
+ADMIN_USER = 'yehara'
+ADMIN_PASSWORD = '514-YugaEhara'
 
 client = OpenSearch(
     hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
     http_auth=(ADMIN_USER, ADMIN_PASSWORD),
-    use_ssl=False,
+    use_ssl=True,
     verify_certs=False
 )
 
@@ -33,7 +33,7 @@ index_body = {
             "text": {"type": "text"},
             "group": {"type": "keyword"},
             "create_at": {"type": "date"},
-            "update_at": {"type": "date"},
+            "modify_at": {"type": "date"},
             "vector": {
                 "type": "knn_vector",
                 "dimension": 384
