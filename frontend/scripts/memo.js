@@ -1,3 +1,4 @@
+// メモデータの取得
 async function getData() {
     const url = "http://localhost:8001/api/";
     try {
@@ -10,7 +11,6 @@ async function getData() {
         console.error(error.message);
     }
 }
-
 
 let memoData;
 let selectedMemos = new Set(); // 選択されたメモのIDを管理
@@ -32,8 +32,7 @@ window.setupMemo = async function() {
         memoContent.className = 'memo-content-area';
         memoContent.onclick = () => openMemo(memo.id);
 
-        const firstParagraph = memo.text;
-        previewText = firstParagraph;
+        const previewText = memo.text;
 
         const groupArea = document.createElement('div');
         groupArea.className = 'memo-item-group-area';
@@ -75,7 +74,6 @@ window.setupMemo = async function() {
         `;
 
         memoItem.appendChild(memoContent);
-        memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 };
@@ -110,8 +108,16 @@ function updateSelectionUI() {
 
 async function generateMemoList() {
     const memoList = document.querySelector('.memo-list');
-    memoList.innerHTML = ''; // 既存のメモをクリア
+    if (!memoList) {
+        console.error('メモリストが見つかりません');
+        return;
+    }
+    memoList.innerHTML = '';
 
+    if (!memoData || !Array.isArray(memoData)) {
+        console.error('メモデータが不正です');
+        return;
+    }
 
     memoData.forEach(memo => {
         const memoItem = document.createElement('div');
@@ -163,7 +169,6 @@ async function generateMemoList() {
         `;
 
         memoItem.appendChild(memoContent);
-        memoItem.appendChild(groupEditArea);
         memoList.appendChild(memoItem);
     });
 }
@@ -220,6 +225,7 @@ function openMemo(id) {
 
     memoList.classList.add('hidden');
     memoEmb.classList.remove('hidden');
+    memoEmb.dataset.id = memo.id;
 }
 
 function closeMemo() {
@@ -266,6 +272,36 @@ window.deleteMemo = function(id) {
     }
 };
 
+window.editMemo = function() {
+    const memoEmb = document.querySelector('.memo-emb');
+    const memoId = memoEmb.dataset.id; // 現在開いているメモのID
+    const memo = memoData.find(m => m.id === parseInt(memoId));
+    
+    if (!memo) {
+        console.error('メモが見つかりません');
+        return;
+    }
+
+    // 編集画面を表示
+    toggleMemoEdit();
+
+    // 編集画面のテキストエリアに現在のメモの内容をセット
+    const memoEditTextarea = document.getElementById('memoEditTextarea');
+    if (memoEditTextarea) {
+        memoEditTextarea.value = memo.text;
+        // プレビューも更新
+        const memoPreview = document.getElementById('memoPreview');
+        if (memoPreview) {
+            memoPreview.innerHTML = marked.parse(memo.text);
+        }
+    }
+
+    // 編集中のメモIDを保存
+    const memoEditContainer = document.querySelector('.memo-edit-container');
+    if (memoEditContainer) {
+        memoEditContainer.dataset.memoId = memoId;
+    }
+};
 document.querySelectorAll(".memo-item-button-delete").forEach(button => {
     button.addEventListener("click", window.deleteMemo);
 });
