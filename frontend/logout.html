@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログアウト - Similarian</title>
+    <link rel="stylesheet" href="/styles/login.css">
+    <style>
+        .logout-message {
+            text-align: center;
+            margin: 20px 0;
+            color: #4f83d1;
+            font-size: 1.2rem;
+        }
+        .redirect-timer {
+            text-align: center;
+            color: #666;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form">
+            <h1>Similarian</h1>
+            <h1 class="login-title">ログアウト完了</h1>
+            <div class="logout-message">
+                ログアウトが完了しました
+            </div>
+            <div class="redirect-timer">
+                <span id="timer">3</span>秒後にログイン画面に移動します
+            </div>
+            <button onclick="redirectToLogin()" type="button">今すぐログイン画面へ</button>
+        </div>
+    </div>
+    <script>
+        let timeLeft = 3;
+        const timerElement = document.getElementById('timer');
+        
+        function redirectToLogin() {
+            window.location.href = "http://localhost:8001/login";
+        }
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                redirectToLogin();
+            }
+        }, 1000);
+    </script>
+</body>
+</html> 

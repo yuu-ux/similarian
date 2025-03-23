@@ -1,6 +1,6 @@
 from opensearchpy import OpenSearch
 from datetime import timedelta, datetime
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from dotenv import load_dotenv
 import os
 
@@ -75,3 +75,12 @@ def login():
         return jsonify({'status': 'success', 'message': 'ログイン成功しました'}), 201
     except:
         return jsonify({'status': 'error', 'message': 'サーバーエラー'}), 500
+
+@member_bp.route('/logout', methods=['POST'])
+def logout():
+    try:
+        # セッションをクリア
+        session.clear()
+        return jsonify({'status': 'success', 'message': 'ログアウトしました'}), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': 'ログアウトに失敗しました'}), 500

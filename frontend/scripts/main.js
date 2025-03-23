@@ -12,15 +12,24 @@ function loadComponent(id, file, callback) {
     .catch(error => console.error(`Error loading ${file}:`, error));
 }
 
-// 各パーツを読み込む
-// 1) サイドバー (sidebar.html) 読み込み後に setupSidebar() を呼ぶ
-loadComponent("sidebar", "components/sidebar.html", () => {
+// サイドバーを読み込んだ後の処理
+function afterSidebarLoad() {
   if (window.setupSidebar) {
-    window.setupSidebar(); // グローバルに定義してある関数を呼ぶ
+    window.setupSidebar();
   } else {
     console.error("❌ setupSidebar が未定義です");
   }
-});
+  
+  if (window.setupLogout) {
+    window.setupLogout();
+  } else {
+    console.error("❌ setupLogout が未定義です");
+  }
+}
+
+// 各パーツを読み込む
+// 1) サイドバー (sidebar.html) 読み込み後に setupSidebar と setupLogout を呼ぶ
+loadComponent("sidebar", "components/sidebar.html", afterSidebarLoad);
 
 // 2) ヘッダー (header.html) 読み込み後に setupHeader() を呼ぶ
 loadComponent("header", "components/header.html", () => {
