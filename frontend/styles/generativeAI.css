@@ -1,0 +1,60 @@
+/* AI表示領域のスタイル */
+.ai-display-area {
+    position: fixed;
+    top: 80px; /* ヘッダーの高さ */
+    right: 0;
+    width: 33.33%; /* main要素の33.33% */
+    height: calc(100vh - 80px);
+    background-color: #ffffff;
+    border-left: 1px solid #89a0ab;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.ai-display-area.hidden {
+    transform: translateX(100%);
+}
+
+.ai-display-area.active {
+    transform: translateX(0);
+}
+
+.ai-display-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #89a0ab;
+}
+
+.ai-display-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #313131;
+}
+
+.ai-close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #313131;
+    padding: 0.5rem;
+    line-height: 1;
+}
+
+.ai-close-button:hover {
+    color: #666;
+}
+
+.ai-display-content {
+    padding: 1rem;
+    height: 200%;
+    overflow-y: auto; /* 縦のオーバーフローを自動で表示 */
+    overflow-x: hidden; /* 横のオーバーフローを隠す */
+}
+
+/* メモリストの幅を調整 */
+.memo-list.with-ai {
+    width: 66.67%;
+} 

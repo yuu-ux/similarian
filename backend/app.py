@@ -4,8 +4,10 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from sentence_transformers import SentenceTransformer
+import boto3
+import json
+from botocore.exceptions import ClientError
 from member import member_bp
-
 
 load_dotenv()
 app = Flask(__name__)
@@ -26,6 +28,15 @@ client = OpenSearch (
 
 model = SentenceTransformer('stsb-xlm-r-multilingual')
 INDEX_NAME = 'memo'
+
+# Bedrockのクライアント設定を修正
+bedrock_runtime = boto3.client(
+    service_name='bedrock-runtime',
+    region_name='us-west-2',
+    aws_session_token=os.getenv('AWS_SESSION_TOKEN'),
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -136,6 +147,75 @@ def search_memos():
     }
     response = client.search(index=INDEX_NAME, body=query)
     return jsonify(response['hits']['hits'])
+
+@app.route('/sendTexts', methods=['POST'])
+def send_texts():
+    try:
+        data = request.json
+        texts = data.get('texts', [])
+        
+        print("受け取ったテキスト:", texts)  # デバッグログ
+
+        # テキストを結合して1つのプロンプトにする
+        combined_text = "以下の複数のテキストの内容を基に、ユーザに新しいアイディアを提供してください。：\n\n" + "\n\n".join(texts)
+
+        # Claudeへのリクエストボディを作成
+        request_body = {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 1000,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": combined_text
+                }
+            ],
+            "temperature": 0.7,
+            "top_p": 1,
+            "top_k": 250
+        }
+
+        try:
+            print("Bedrockにリクエスト送信:", json.dumps(request_body, indent=2))
+            
+            print(os.getenv('AWS_SECRET_ACCESS_KEY'))
+            print(os.getenv('AWS_ACCESS_KEY_ID'))
+            print(os.getenv('AWS_SESSION_TOKEN'))
+            # Bedrock APIを呼び出し
+            response = bedrock_runtime.invoke_model(
+                modelId="anthropic.claude-3-sonnet-20240229-v1:0",
+                body=json.dumps(request_body),
+                contentType="application/json",
+                accept="application/json"
+            )
+
+            # レスポンスの処理
+            response_body = json.loads(response['body'].read().decode())
+            print("Bedrockからのレスポンス:", json.dumps(response_body, indent=2))  # デバッグログ
+
+            # レスポンスから生成されたテキストを取得
+            generated_text = response_body['content'][0]['text']
+
+            return jsonify({
+                'status': 'success',
+                'message': 'テキストを生成しました',
+                'generated_text': generated_text
+            })
+
+        except ClientError as e:
+            error_code = e.response['Error']['Code']
+            error_message = e.response['Error']['Message']
+            print(f"Bedrock APIエラー: {error_code} - {error_message}")  # デバッグログ
+            return jsonify({
+                'status': 'error',
+                'message': f'Bedrock APIエラー: {error_message}'
+            }), 500
+
+    except Exception as e:
+        print(f"予期せぬエラー: {str(e)}")  # デバッグログ
+        return jsonify({
+            'status': 'error',
+            'message': f'テキストの生成に失敗しました: {str(e)}'
+        }), 500
 
 if __name__ == '__main__':
     app.run()
